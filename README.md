@@ -1,4 +1,7 @@
 # Expr – a tiny stack-based virtual machine written in Go
+[![Build Status](https://travis-ci.com/regeda/expr.svg?branch=main)](https://travis-ci.com/regeda/expr)
+[![codecov](https://codecov.io/gh/regeda/expr/branch/main/graph/badge.svg?token=99QXNC2IAO)](https://codecov.io/gh/regeda/expr)
+[![Go Reference](https://pkg.go.dev/badge/gihub.com/regeda/expr.svg)](https://pkg.go.dev/github.com/regeda/expr)
 
 The executor is designed to interpret **a simple expression language** and it's useful in delegating decision enforcement to user scripts.
 
