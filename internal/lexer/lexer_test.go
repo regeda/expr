@@ -15,7 +15,9 @@ func TestLexer_Parse(t *testing.T) {
 	}{
 		{"true", "nested:<token:BOOL b:true > "},
 		{"false", "nested:<token:BOOL b:false > "},
+		{`""`, "nested:<token:STR s:\"\" > "},
 		{`"foo"`, "nested:<token:STR s:\"foo\" > "},
+		{`"\"a\" \"b\" \"c\""`, `nested:<token:STR s:"\"a\" \"b\" \"c\"" > `},
 		{"foo()", "nested:<token:CALL s:\"foo\" > "},
 		{"[1,2]", "nested:<token:ARR nested:<token:INT i:1 > nested:<token:INT i:2 > > "},
 		{"foo([1])", "nested:<token:CALL s:\"foo\" nested:<token:ARR nested:<token:INT i:1 > > > "},
@@ -59,6 +61,7 @@ func TestLexer_CouldNotParse(t *testing.T) {
 		{"foo(", "stack parse error: foo("},
 		{"[1,2", "token parse error: [1,2"},
 		{`"foo`, `token parse error: "foo`},
+		{`"foo\"`, `token parse error: "foo\"`},
 		{"foo(bar(1)", "stack parse error: foo(bar(1)"},
 		{"[foo()]", "token parse error: [foo()]"},
 		{"[1 1]", "token parse error: [1 1]"},

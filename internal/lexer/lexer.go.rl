@@ -62,12 +62,14 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	action vm_int { l.nodes.Nest(value.Atoi(l.text())) }
 	action vm_bool { l.nodes.Nest(value.Bool(l.text() == "true")) }
 
-	nonquote = [^"];
+	not_dquote = [^"\\];
+	esc_smth = /\\./;
 
+	str_body = not_dquote | esc_smth;
 	func_name = [A-Za-z_][A-Za-z_0-9]*;
 
 	num = ( ('+'|'-')? digit+ ) >mark %vm_int;
-	str = '"' nonquote* >mark %vm_str '"';
+	str = '"' str_body* >mark %vm_str '"';
 	bool = ('true' | 'false') >mark %vm_bool;
 	func = (func_name & !bool) >mark %vm_call;
 
@@ -94,7 +96,6 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	write init;
 	write exec;
 }%%
-
 	if l.top > 0 {
 		return nil, fmt.Errorf("stack parse error: %s", l.data)
 	}

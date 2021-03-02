@@ -24,7 +24,8 @@ You can add custom functions to the executor empowering your application.
 
 *string* (wrapped by double quote)
 ```js
-"hello expr!"
+"Hello Expr!"
+"Welcome \"Alice\" and \"Bob\""
 ```
 
 *boolean*
