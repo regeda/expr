@@ -8,7 +8,7 @@ You can easily embed the toolchain in your Go application.
 
 The executor is blazingly fast and it makes no memory allocation.
 
-You can add custom functions to the executor to empower your application.
+You can add custom functions to the executor empowering your application.
 
 ## Syntax
 
@@ -86,10 +86,10 @@ The resulted syntax tree:
 ```
 EXIT
 |-- CALL(join)
-   |-- STRING(",")
-   |-- ARRAY
-       |-- STRING("a")
-       |-- STRING("b")
+   |-- STR(",")
+   |-- ARR
+       |-- STR("a")
+       |-- STR("b")
 ```
 
 > The lexer is implemented using [Ragel State Machine Compiler](https://www.colm.net/open-source/ragel/). The syntax tree is described by [Protocol Buffers 3](https://developers.google.com/protocol-buffers/) to make it easy traversable by any programming language.
