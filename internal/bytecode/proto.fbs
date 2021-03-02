@@ -1,0 +1,50 @@
+namespace bytecode;
+
+table OpPushStr {
+  val:string;
+}
+
+table OpPushInt {
+  val:long;
+}
+
+table OpPushBool {
+  val:bool;
+}
+
+table OpPushVector {
+  elems:ushort;
+}
+
+table OpSysCall {
+  args:ushort;
+  name:string;
+}
+
+table OpRet {
+}
+
+union Op {
+  OpPushStr,
+  OpPushInt,
+  OpPushBool,
+  OpPushVector,
+  OpSysCall,
+  OpRet
+}
+
+table Version {
+  minor:ubyte;
+  major:ubyte;
+}
+
+table Frame {
+  op:Op;
+}
+
+table Program {
+  ver:Version;
+  frames:[Frame];
+}
+
+root_type Program;
