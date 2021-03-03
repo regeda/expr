@@ -7,7 +7,7 @@ type heap struct {
 	buf [HeapLimit]byte
 }
 
-func (h *heap) len() uint32 {
+func (h *heap) size() uint32 {
 	return uint32(len(h.buf))
 }
 
@@ -16,8 +16,8 @@ func (h *heap) reset() {
 }
 
 func (h *heap) alloc(size uint32) ([]byte, error) {
-	if h.p+size > h.len() {
-		return nil, fmt.Errorf("memory: out of memory to alloc %d bytes", h.p-h.len()+size)
+	if h.p+size > h.size() {
+		return nil, fmt.Errorf("memory: out of memory to alloc %d bytes", h.p-h.size()+size)
 	}
 	p := h.p
 	h.p += size

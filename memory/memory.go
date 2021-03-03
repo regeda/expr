@@ -7,7 +7,7 @@ type Memory struct {
 }
 
 func (b *Memory) Heapfree() uint32 {
-	return b.h.len() - b.h.p
+	return b.h.size() - b.h.p
 }
 
 func (b *Memory) Reset() {
