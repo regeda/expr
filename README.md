@@ -46,17 +46,21 @@ Helpfully, this toolchain is equipped with an own standard library to handle bas
 
 #### stdlib
 
-*`concat(string, ...)`* returns a concatenated string
+###### `concat(string, ...)`
+returns a concatenated string
 ```js
 concat("a", "b", "c") // "abc"
 ```
 
-*`join(string, [string, ...])`* returns a concatenated string with a separator
+###### `join(string, [string, ...])`
+returns a concatenated string with a separator
 ```js
 join(", ", ["a", "b", "c"]) // "a, b, c"
 ```
 
-*`equals(string, string)`* or *`equals(int64, int64)`* returns `true` if both arguments are equal
+###### `equals(string, string)`
+###### `equals(int64, int64)`
+returns `true` if both arguments are equal
 ```js
 equals(1, 1) // true
 equals(1, 0) // false
@@ -64,16 +68,20 @@ equals("foo", "foo") // true
 equals("foo", "bar") // false
 ```
 
-*`intersects([string, ...], [string, ...])`* or *`intersects([int64, ...], [int64, ...])`* returns `true` if both arrays share the same item
+###### `intersects([string, ...], [string, ...])`
+###### `intersects([int64, ...], [int64, ...])`
+returns `true` if both arrays share the same item
 ```js
 intersects([1, 2, 3], [3, 4]) // true
 intersects([1, 2, 3], [4, 5]) // false
 ```
 
-*`contains([string, ...], [string, ...])`* or *`contains([int64, ...], [int64, ...])`* returns `true` if the left array contains all items from the right array
+###### `contains([string, ...], string)`
+###### `contains([int64, ...], int64)`
+returns `true` if the value exists in the array
 ```js
-contains([1, 2, 3], [1, 3]) // true
-contains([1, 2, 3], [3, 4]) // false
+contains([1, 2, 3], 1) // true
+contains([1, 2, 3], 4) // false
 ```
 
 ## Architecture
