@@ -12,6 +12,7 @@ gen-fbs:
 
 gen-lexer: gen-proto
 	@ragel -Z -G2 internal/lexer/lexer.go.rl -o internal/lexer/lexer.go
+	@goimports -w internal/lexer/lexer.go
 
 test: gen-fbs gen-lexer
 	@go test -v -cover ./...

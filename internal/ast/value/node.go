@@ -1,7 +1,6 @@
 package value
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/regeda/expr/internal/ast"
@@ -23,11 +22,6 @@ func Call(s string) *ast.Node {
 		Token: ast.Node_CALL,
 		Data:  &ast.Node_S{S: strings.ToLower(s)},
 	}
-}
-
-func Atoi(s string) *ast.Node {
-	n, _ := strconv.ParseInt(s, 10, 64)
-	return Int(n)
 }
 
 func Int(n int64) *ast.Node {

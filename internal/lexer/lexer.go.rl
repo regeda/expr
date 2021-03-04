@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/regeda/expr/internal/ast"
 	"github.com/regeda/expr/internal/ast/value"
@@ -20,7 +21,6 @@ type Lexer struct {
 	pb         int
 	top        int
 	stack      []int
-	err        error
 	nodes      stack.Stack
 }
 
@@ -40,10 +40,12 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	l.pb = 0
 	l.pe = len(input)
 	l.eof = len(input)
-	l.err = nil
 	l.nodes.Reset()
 
 	l.nodes.Push(value.Exit())
+
+	var perr error
+	var n64 int64
 
 %%{
 	access l.;
@@ -59,7 +61,13 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	action vm_call { l.nodes.Push(l.nodes.Nest(value.Call(l.text()))) }
 	action vm_arr { l.nodes.Push(l.nodes.Nest(value.Arr())) }
 	action vm_str { l.nodes.Nest(value.Str(l.text())) }
-	action vm_int { l.nodes.Nest(value.Atoi(l.text())) }
+	action vm_int {
+		n64, perr = strconv.ParseInt(l.text(), 10, 64)
+		if perr != nil {
+			fbreak;
+		}
+		l.nodes.Nest(value.Int(n64))
+	}
 	action vm_bool { l.nodes.Nest(value.Bool(l.text() == "true")) }
 
 	not_dquote = [^"\\];
@@ -97,11 +105,14 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	write exec;
 }%%
 	if l.top > 0 {
-		return nil, fmt.Errorf("stack parse error: %s", l.data)
+		return nil, fmt.Errorf("stack parsing error at %d", l.pb)
 	}
 
 	if l.cs < %%{ write first_final; }%% {
-		return nil, fmt.Errorf("token parse error: %s", l.data)
+		if perr != nil {
+			return nil, fmt.Errorf("parse error at %d: %w", l.pb, perr)
+		}
+		return nil, fmt.Errorf("token parsing error at %d", l.pb)
 	}
 
 	return l.nodes.Top(), nil
