@@ -5,20 +5,21 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/pkg/errors"
 	"github.com/regeda/expr/internal/ast"
 	"github.com/regeda/expr/internal/ast/stack"
 	"github.com/regeda/expr/internal/ast/value"
 )
 
-//line internal/lexer/lexer.go:16
+//line internal/lexer/lexer.go:17
 const lexer_start int = 1
-const lexer_first_final int = 61
+const lexer_first_final int = 60
 const lexer_error int = 0
 
-const lexer_en_invoke_rest int = 29
+const lexer_en_invoke_rest int = 28
 const lexer_en_main int = 1
 
-//line internal/lexer/lexer.go.rl:15
+//line internal/lexer/lexer.go.rl:16
 
 type Lexer struct {
 	data       []byte
@@ -52,14 +53,15 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 
 	var perr error
 	var n64 int64
+	var str string
 
-//line internal/lexer/lexer.go:62
+//line internal/lexer/lexer.go:64
 	{
 		l.cs = lexer_start
 		l.top = 0
 	}
 
-//line internal/lexer/lexer.go:68
+//line internal/lexer/lexer.go:70
 	{
 		if (l.p) == (l.pe) {
 			goto _test_eof
@@ -74,18 +76,20 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st0
 		case 2:
 			goto st2
+		case 60:
+			goto st60
 		case 3:
 			goto st3
-		case 61:
-			goto st61
 		case 4:
 			goto st4
+		case 61:
+			goto st61
 		case 5:
 			goto st5
-		case 62:
-			goto st62
 		case 6:
 			goto st6
+		case 62:
+			goto st62
 		case 7:
 			goto st7
 		case 8:
@@ -124,10 +128,10 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st24
 		case 25:
 			goto st25
-		case 26:
-			goto st26
 		case 63:
 			goto st63
+		case 26:
+			goto st26
 		case 27:
 			goto st27
 		case 28:
@@ -138,10 +142,10 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st30
 		case 31:
 			goto st31
-		case 32:
-			goto st32
 		case 64:
 			goto st64
+		case 32:
+			goto st32
 		case 33:
 			goto st33
 		case 34:
@@ -196,8 +200,6 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st58
 		case 59:
 			goto st59
-		case 60:
-			goto st60
 		}
 
 		if (l.p)++; (l.p) == (l.pe) {
@@ -211,18 +213,20 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st_case_0
 		case 2:
 			goto st_case_2
+		case 60:
+			goto st_case_60
 		case 3:
 			goto st_case_3
-		case 61:
-			goto st_case_61
 		case 4:
 			goto st_case_4
+		case 61:
+			goto st_case_61
 		case 5:
 			goto st_case_5
-		case 62:
-			goto st_case_62
 		case 6:
 			goto st_case_6
+		case 62:
+			goto st_case_62
 		case 7:
 			goto st_case_7
 		case 8:
@@ -261,10 +265,10 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st_case_24
 		case 25:
 			goto st_case_25
-		case 26:
-			goto st_case_26
 		case 63:
 			goto st_case_63
+		case 26:
+			goto st_case_26
 		case 27:
 			goto st_case_27
 		case 28:
@@ -275,10 +279,10 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st_case_30
 		case 31:
 			goto st_case_31
-		case 32:
-			goto st_case_32
 		case 64:
 			goto st_case_64
+		case 32:
+			goto st_case_32
 		case 33:
 			goto st_case_33
 		case 34:
@@ -333,8 +337,6 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto st_case_58
 		case 59:
 			goto st_case_59
-		case 60:
-			goto st_case_60
 		}
 		goto st_out
 	st1:
@@ -346,7 +348,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 		case 32:
 			goto st1
 		case 34:
-			goto st2
+			goto tr2
 		case 43:
 			goto tr3
 		case 45:
@@ -382,98 +384,37 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	st0:
 		l.cs = 0
 		goto _out
+	tr2:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
+		goto st2
 	st2:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof2
 		}
 	st_case_2:
+//line internal/lexer/lexer.go:402
 		switch l.data[(l.p)] {
 		case 34:
-			goto tr10
+			goto st60
 		case 92:
-			goto tr11
+			goto st3
 		}
-		goto tr9
-	tr9:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st3
+		goto st2
+	st60:
+		if (l.p)++; (l.p) == (l.pe) {
+			goto _test_eof60
+		}
+	st_case_60:
+		goto st0
 	st3:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof3
 		}
 	st_case_3:
-//line internal/lexer/lexer.go:412
-		switch l.data[(l.p)] {
-		case 34:
-			goto tr13
-		case 92:
-			goto st4
-		}
-		goto st3
-	tr10:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
-		goto st61
-	tr13:
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
-		goto st61
-	tr17:
-//line internal/lexer/lexer.go.rl:61
-		l.nodes.Push(l.nodes.Nest(value.Call(l.text())))
-//line internal/lexer/lexer.go.rl:98
-		{
-			l.stack[l.top] = 61
-			l.top++
-			goto st29
-		}
-		goto st61
-	tr20:
-//line internal/lexer/lexer.go.rl:98
-		{
-			l.stack[l.top] = 61
-			l.top++
-			goto st29
-		}
-		goto st61
-	tr25:
+		goto st2
+	tr3:
 //line internal/lexer/lexer.go.rl:59
-		l.nodes.Pop()
-		goto st61
-	tr39:
-//line internal/lexer/lexer.go.rl:64
-
-		n64, perr = strconv.ParseInt(l.text(), 10, 64)
-		if perr != nil {
-			{
-				(l.p)++
-				l.cs = 61
-				goto _out
-			}
-		}
-		l.nodes.Nest(value.Int(n64))
-
-//line internal/lexer/lexer.go.rl:59
-		l.nodes.Pop()
-		goto st61
-	tr46:
-//line internal/lexer/lexer.go.rl:71
-		l.nodes.Nest(value.Bool(l.text() == "true"))
-//line internal/lexer/lexer.go.rl:59
-		l.nodes.Pop()
-		goto st61
-	st61:
-		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof61
-		}
-	st_case_61:
-//line internal/lexer/lexer.go:467
-		goto st0
-	tr11:
-//line internal/lexer/lexer.go.rl:57
 		l.pb = l.p
 		goto st4
 	st4:
@@ -481,10 +422,27 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof4
 		}
 	st_case_4:
-//line internal/lexer/lexer.go:478
-		goto st3
-	tr3:
-//line internal/lexer/lexer.go.rl:57
+//line internal/lexer/lexer.go:431
+		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+			goto st61
+		}
+		goto st0
+	tr4:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
+		goto st61
+	st61:
+		if (l.p)++; (l.p) == (l.pe) {
+			goto _test_eof61
+		}
+	st_case_61:
+//line internal/lexer/lexer.go:445
+		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+			goto st61
+		}
+		goto st0
+	tr5:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st5
 	st5:
@@ -492,157 +450,258 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof5
 		}
 	st_case_5:
-//line internal/lexer/lexer.go:489
-		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-			goto st62
+//line internal/lexer/lexer.go:459
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr13
+		case 40:
+			goto tr14
+		case 95:
+			goto st5
+		}
+		switch {
+		case l.data[(l.p)] < 48:
+			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+				goto tr13
+			}
+		case l.data[(l.p)] > 57:
+			switch {
+			case l.data[(l.p)] > 90:
+				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
+					goto st5
+				}
+			case l.data[(l.p)] >= 65:
+				goto st5
+			}
+		default:
+			goto st5
 		}
 		goto st0
-	tr4:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st62
-	st62:
-		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof62
-		}
-	st_case_62:
-//line internal/lexer/lexer.go:503
-		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-			goto st62
-		}
-		goto st0
-	tr5:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
+	tr13:
+//line internal/lexer/lexer.go.rl:63
+		l.nodes.Push(l.nodes.Nest(value.Call(l.text())))
 		goto st6
 	st6:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof6
 		}
 	st_case_6:
-//line internal/lexer/lexer.go:517
+//line internal/lexer/lexer.go:495
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr16
+			goto st6
 		case 40:
 			goto tr17
-		case 95:
-			goto st6
 		}
-		switch {
-		case l.data[(l.p)] < 48:
-			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr16
-			}
-		case l.data[(l.p)] > 57:
-			switch {
-			case l.data[(l.p)] > 90:
-				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st6
-				}
-			case l.data[(l.p)] >= 65:
-				goto st6
-			}
-		default:
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
 			goto st6
 		}
 		goto st0
-	tr16:
-//line internal/lexer/lexer.go.rl:61
+	tr14:
+//line internal/lexer/lexer.go.rl:63
 		l.nodes.Push(l.nodes.Nest(value.Call(l.text())))
+//line internal/lexer/lexer.go.rl:108
+		{
+			l.stack[l.top] = 62
+			l.top++
+			goto st28
+		}
+		goto st62
+	tr17:
+//line internal/lexer/lexer.go.rl:108
+		{
+			l.stack[l.top] = 62
+			l.top++
+			goto st28
+		}
+		goto st62
+	tr22:
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+		goto st62
+	tr30:
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 62
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+		goto st62
+	tr36:
+//line internal/lexer/lexer.go.rl:73
+
+		n64, perr = strconv.ParseInt(l.text(), 10, 64)
+		if perr != nil {
+			{
+				(l.p)++
+				l.cs = 62
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Int(n64))
+
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+		goto st62
+	tr43:
+//line internal/lexer/lexer.go.rl:80
+		l.nodes.Nest(value.Bool(l.text() == "true"))
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+		goto st62
+	st62:
+		if (l.p)++; (l.p) == (l.pe) {
+			goto _test_eof62
+		}
+	st_case_62:
+//line internal/lexer/lexer.go:556
+		goto st0
+	tr6:
+//line internal/lexer/lexer.go.rl:64
+		l.nodes.Push(l.nodes.Nest(value.Arr()))
 		goto st7
 	st7:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof7
 		}
 	st_case_7:
-//line internal/lexer/lexer.go:553
+//line internal/lexer/lexer.go:567
 		switch l.data[(l.p)] {
 		case 32:
 			goto st7
-		case 40:
+		case 34:
+			goto tr19
+		case 43:
 			goto tr20
+		case 45:
+			goto tr20
+		case 93:
+			goto tr22
+		case 102:
+			goto tr23
+		case 116:
+			goto tr24
 		}
-		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+		switch {
+		case l.data[(l.p)] > 13:
+			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+				goto tr21
+			}
+		case l.data[(l.p)] >= 9:
 			goto st7
 		}
 		goto st0
-	tr6:
-//line internal/lexer/lexer.go.rl:62
-		l.nodes.Push(l.nodes.Nest(value.Arr()))
+	tr19:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
 		goto st8
 	st8:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof8
 		}
 	st_case_8:
-//line internal/lexer/lexer.go:573
+//line internal/lexer/lexer.go:602
 		switch l.data[(l.p)] {
-		case 32:
-			goto st8
 		case 34:
 			goto st9
-		case 43:
-			goto tr23
-		case 45:
-			goto tr23
-		case 93:
-			goto tr25
-		case 102:
-			goto tr26
-		case 116:
-			goto tr27
+		case 92:
+			goto st21
 		}
-		switch {
-		case l.data[(l.p)] > 13:
-			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-				goto tr24
-			}
-		case l.data[(l.p)] >= 9:
-			goto st8
-		}
-		goto st0
+		goto st8
 	st9:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof9
 		}
 	st_case_9:
 		switch l.data[(l.p)] {
-		case 34:
+		case 32:
+			goto tr28
+		case 44:
 			goto tr29
-		case 92:
+		case 93:
 			goto tr30
 		}
-		goto tr28
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+			goto tr28
+		}
+		goto st0
 	tr28:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 10
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
+		goto st10
+	tr34:
+//line internal/lexer/lexer.go.rl:73
+
+		n64, perr = strconv.ParseInt(l.text(), 10, 64)
+		if perr != nil {
+			{
+				(l.p)++
+				l.cs = 10
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Int(n64))
+
+		goto st10
+	tr41:
+//line internal/lexer/lexer.go.rl:80
+		l.nodes.Nest(value.Bool(l.text() == "true"))
 		goto st10
 	st10:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof10
 		}
 	st_case_10:
-//line internal/lexer/lexer.go:620
+//line internal/lexer/lexer.go:657
 		switch l.data[(l.p)] {
-		case 34:
-			goto tr32
-		case 92:
-			goto st22
+		case 32:
+			goto st10
+		case 44:
+			goto st11
+		case 93:
+			goto tr22
 		}
-		goto st10
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+			goto st10
+		}
+		goto st0
 	tr29:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 11
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
 		goto st11
-	tr32:
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
-		goto st11
-	tr37:
-//line internal/lexer/lexer.go.rl:64
+	tr35:
+//line internal/lexer/lexer.go.rl:73
 
 		n64, perr = strconv.ParseInt(l.text(), 10, 64)
 		if perr != nil {
@@ -655,8 +714,8 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 		l.nodes.Nest(value.Int(n64))
 
 		goto st11
-	tr44:
-//line internal/lexer/lexer.go.rl:71
+	tr42:
+//line internal/lexer/lexer.go.rl:80
 		l.nodes.Nest(value.Bool(l.text() == "true"))
 		goto st11
 	st11:
@@ -664,68 +723,46 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof11
 		}
 	st_case_11:
-//line internal/lexer/lexer.go:657
+//line internal/lexer/lexer.go:700
 		switch l.data[(l.p)] {
 		case 32:
 			goto st11
-		case 44:
-			goto st12
-		case 93:
-			goto tr25
+		case 34:
+			goto tr19
+		case 43:
+			goto tr20
+		case 45:
+			goto tr20
+		case 102:
+			goto tr23
+		case 116:
+			goto tr24
 		}
-		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+		switch {
+		case l.data[(l.p)] > 13:
+			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+				goto tr21
+			}
+		case l.data[(l.p)] >= 9:
 			goto st11
 		}
 		goto st0
-	tr38:
-//line internal/lexer/lexer.go.rl:64
-
-		n64, perr = strconv.ParseInt(l.text(), 10, 64)
-		if perr != nil {
-			{
-				(l.p)++
-				l.cs = 12
-				goto _out
-			}
-		}
-		l.nodes.Nest(value.Int(n64))
-
-		goto st12
-	tr45:
-//line internal/lexer/lexer.go.rl:71
-		l.nodes.Nest(value.Bool(l.text() == "true"))
+	tr20:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
 		goto st12
 	st12:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof12
 		}
 	st_case_12:
-//line internal/lexer/lexer.go:689
-		switch l.data[(l.p)] {
-		case 32:
-			goto st12
-		case 34:
-			goto st9
-		case 43:
-			goto tr23
-		case 45:
-			goto tr23
-		case 102:
-			goto tr26
-		case 116:
-			goto tr27
-		}
-		switch {
-		case l.data[(l.p)] > 13:
-			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-				goto tr24
-			}
-		case l.data[(l.p)] >= 9:
-			goto st12
+//line internal/lexer/lexer.go:733
+		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+			goto st13
 		}
 		goto st0
-	tr23:
-//line internal/lexer/lexer.go.rl:57
+	tr21:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st13
 	st13:
@@ -733,13 +770,26 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof13
 		}
 	st_case_13:
-//line internal/lexer/lexer.go:722
-		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-			goto st14
+//line internal/lexer/lexer.go:747
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr34
+		case 44:
+			goto tr35
+		case 93:
+			goto tr36
+		}
+		switch {
+		case l.data[(l.p)] > 13:
+			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+				goto st13
+			}
+		case l.data[(l.p)] >= 9:
+			goto tr34
 		}
 		goto st0
-	tr24:
-//line internal/lexer/lexer.go.rl:57
+	tr23:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st14
 	st14:
@@ -747,35 +797,17 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof14
 		}
 	st_case_14:
-//line internal/lexer/lexer.go:736
-		switch l.data[(l.p)] {
-		case 32:
-			goto tr37
-		case 44:
-			goto tr38
-		case 93:
-			goto tr39
-		}
-		switch {
-		case l.data[(l.p)] > 13:
-			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-				goto st14
-			}
-		case l.data[(l.p)] >= 9:
-			goto tr37
+//line internal/lexer/lexer.go:774
+		if l.data[(l.p)] == 97 {
+			goto st15
 		}
 		goto st0
-	tr26:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st15
 	st15:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof15
 		}
 	st_case_15:
-//line internal/lexer/lexer.go:763
-		if l.data[(l.p)] == 97 {
+		if l.data[(l.p)] == 108 {
 			goto st16
 		}
 		goto st0
@@ -784,7 +816,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof16
 		}
 	st_case_16:
-		if l.data[(l.p)] == 108 {
+		if l.data[(l.p)] == 115 {
 			goto st17
 		}
 		goto st0
@@ -793,7 +825,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof17
 		}
 	st_case_17:
-		if l.data[(l.p)] == 115 {
+		if l.data[(l.p)] == 101 {
 			goto st18
 		}
 		goto st0
@@ -802,39 +834,39 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof18
 		}
 	st_case_18:
-		if l.data[(l.p)] == 101 {
-			goto st19
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr41
+		case 44:
+			goto tr42
+		case 93:
+			goto tr43
+		}
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+			goto tr41
 		}
 		goto st0
+	tr24:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
+		goto st19
 	st19:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof19
 		}
 	st_case_19:
-		switch l.data[(l.p)] {
-		case 32:
-			goto tr44
-		case 44:
-			goto tr45
-		case 93:
-			goto tr46
-		}
-		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-			goto tr44
+//line internal/lexer/lexer.go:832
+		if l.data[(l.p)] == 114 {
+			goto st20
 		}
 		goto st0
-	tr27:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st20
 	st20:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof20
 		}
 	st_case_20:
-//line internal/lexer/lexer.go:821
-		if l.data[(l.p)] == 114 {
-			goto st21
+		if l.data[(l.p)] == 117 {
+			goto st17
 		}
 		goto st0
 	st21:
@@ -842,12 +874,9 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof21
 		}
 	st_case_21:
-		if l.data[(l.p)] == 117 {
-			goto st18
-		}
-		goto st0
-	tr30:
-//line internal/lexer/lexer.go.rl:57
+		goto st8
+	tr7:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st22
 	st22:
@@ -855,44 +884,66 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof22
 		}
 	st_case_22:
-//line internal/lexer/lexer.go:844
-		goto st10
-	tr7:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st23
-	st23:
-		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof23
-		}
-	st_case_23:
-//line internal/lexer/lexer.go:855
+//line internal/lexer/lexer.go:861
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr16
+			goto tr13
 		case 40:
-			goto tr17
+			goto tr14
 		case 95:
-			goto st6
+			goto st5
 		case 97:
-			goto st24
+			goto st23
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr16
+				goto tr13
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 98 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st6
+					goto st5
 				}
 			case l.data[(l.p)] >= 65:
-				goto st6
+				goto st5
 			}
 		default:
-			goto st6
+			goto st5
+		}
+		goto st0
+	st23:
+		if (l.p)++; (l.p) == (l.pe) {
+			goto _test_eof23
+		}
+	st_case_23:
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr13
+		case 40:
+			goto tr14
+		case 95:
+			goto st5
+		case 108:
+			goto st24
+		}
+		switch {
+		case l.data[(l.p)] < 48:
+			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+				goto tr13
+			}
+		case l.data[(l.p)] > 57:
+			switch {
+			case l.data[(l.p)] > 90:
+				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
+					goto st5
+				}
+			case l.data[(l.p)] >= 65:
+				goto st5
+			}
+		default:
+			goto st5
 		}
 		goto st0
 	st24:
@@ -902,30 +953,30 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	st_case_24:
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr16
+			goto tr13
 		case 40:
-			goto tr17
+			goto tr14
 		case 95:
-			goto st6
-		case 108:
+			goto st5
+		case 115:
 			goto st25
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr16
+				goto tr13
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st6
+					goto st5
 				}
 			case l.data[(l.p)] >= 65:
-				goto st6
+				goto st5
 			}
 		default:
-			goto st6
+			goto st5
 		}
 		goto st0
 	st25:
@@ -935,63 +986,30 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	st_case_25:
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr16
+			goto tr13
 		case 40:
-			goto tr17
+			goto tr14
 		case 95:
-			goto st6
-		case 115:
-			goto st26
-		}
-		switch {
-		case l.data[(l.p)] < 48:
-			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr16
-			}
-		case l.data[(l.p)] > 57:
-			switch {
-			case l.data[(l.p)] > 90:
-				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st6
-				}
-			case l.data[(l.p)] >= 65:
-				goto st6
-			}
-		default:
-			goto st6
-		}
-		goto st0
-	st26:
-		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof26
-		}
-	st_case_26:
-		switch l.data[(l.p)] {
-		case 32:
-			goto tr16
-		case 40:
-			goto tr17
-		case 95:
-			goto st6
+			goto st5
 		case 101:
 			goto st63
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr16
+				goto tr13
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st6
+					goto st5
 				}
 			case l.data[(l.p)] >= 65:
-				goto st6
+				goto st5
 			}
 		default:
-			goto st6
+			goto st5
 		}
 		goto st0
 	st63:
@@ -1000,57 +1018,90 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 		}
 	st_case_63:
 		if l.data[(l.p)] == 95 {
-			goto st6
+			goto st5
 		}
 		switch {
 		case l.data[(l.p)] < 65:
 			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-				goto st6
+				goto st5
 			}
 		case l.data[(l.p)] > 90:
 			if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-				goto st6
+				goto st5
 			}
 		default:
-			goto st6
+			goto st5
 		}
 		goto st0
 	tr8:
-//line internal/lexer/lexer.go.rl:57
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
-		goto st27
-	st27:
+		goto st26
+	st26:
 		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof27
+			goto _test_eof26
 		}
-	st_case_27:
-//line internal/lexer/lexer.go:1013
+	st_case_26:
+//line internal/lexer/lexer.go:1019
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr16
+			goto tr13
 		case 40:
-			goto tr17
+			goto tr14
 		case 95:
-			goto st6
+			goto st5
 		case 114:
-			goto st28
+			goto st27
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr16
+				goto tr13
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st6
+					goto st5
 				}
 			case l.data[(l.p)] >= 65:
-				goto st6
+				goto st5
 			}
 		default:
-			goto st6
+			goto st5
+		}
+		goto st0
+	st27:
+		if (l.p)++; (l.p) == (l.pe) {
+			goto _test_eof27
+		}
+	st_case_27:
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr13
+		case 40:
+			goto tr14
+		case 95:
+			goto st5
+		case 117:
+			goto st25
+		}
+		switch {
+		case l.data[(l.p)] < 48:
+			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+				goto tr13
+			}
+		case l.data[(l.p)] > 57:
+			switch {
+			case l.data[(l.p)] > 90:
+				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
+					goto st5
+				}
+			case l.data[(l.p)] >= 65:
+				goto st5
+			}
+		default:
+			goto st5
 		}
 		goto st0
 	st28:
@@ -1060,206 +1111,223 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	st_case_28:
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr16
-		case 40:
-			goto tr17
+			goto st28
+		case 34:
+			goto tr51
+		case 41:
+			goto tr52
+		case 43:
+			goto tr53
+		case 45:
+			goto tr53
+		case 91:
+			goto tr56
 		case 95:
-			goto st6
-		case 117:
-			goto st26
+			goto tr55
+		case 102:
+			goto tr57
+		case 116:
+			goto tr58
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr16
+				goto st28
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st6
+					goto tr55
 				}
 			case l.data[(l.p)] >= 65:
-				goto st6
+				goto tr55
 			}
 		default:
-			goto st6
+			goto tr54
 		}
 		goto st0
+	tr51:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
+		goto st29
 	st29:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof29
 		}
 	st_case_29:
+//line internal/lexer/lexer.go:1133
 		switch l.data[(l.p)] {
-		case 32:
-			goto st29
 		case 34:
 			goto st30
-		case 41:
-			goto tr55
-		case 43:
-			goto tr56
-		case 45:
-			goto tr56
-		case 91:
-			goto tr59
-		case 95:
-			goto tr58
-		case 102:
-			goto tr60
-		case 116:
-			goto tr61
+		case 92:
+			goto st59
 		}
-		switch {
-		case l.data[(l.p)] < 48:
-			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto st29
-			}
-		case l.data[(l.p)] > 57:
-			switch {
-			case l.data[(l.p)] > 90:
-				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto tr58
-				}
-			case l.data[(l.p)] >= 65:
-				goto tr58
-			}
-		default:
-			goto tr57
-		}
-		goto st0
+		goto st29
 	st30:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof30
 		}
 	st_case_30:
 		switch l.data[(l.p)] {
-		case 34:
+		case 32:
+			goto tr62
+		case 41:
 			goto tr63
-		case 92:
+		case 44:
 			goto tr64
 		}
-		goto tr62
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+			goto tr62
+		}
+		goto st0
+	tr72:
+//line internal/lexer/lexer.go.rl:63
+		l.nodes.Push(l.nodes.Nest(value.Call(l.text())))
+//line internal/lexer/lexer.go.rl:108
+		{
+			l.stack[l.top] = 31
+			l.top++
+			goto st28
+		}
+		goto st31
+	tr75:
+//line internal/lexer/lexer.go.rl:108
+		{
+			l.stack[l.top] = 31
+			l.top++
+			goto st28
+		}
+		goto st31
+	tr80:
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+		goto st31
 	tr62:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 31
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
+		goto st31
+	tr88:
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 31
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+		goto st31
+	tr68:
+//line internal/lexer/lexer.go.rl:73
+
+		n64, perr = strconv.ParseInt(l.text(), 10, 64)
+		if perr != nil {
+			{
+				(l.p)++
+				l.cs = 31
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Int(n64))
+
+		goto st31
+	tr94:
+//line internal/lexer/lexer.go.rl:73
+
+		n64, perr = strconv.ParseInt(l.text(), 10, 64)
+		if perr != nil {
+			{
+				(l.p)++
+				l.cs = 31
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Int(n64))
+
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+		goto st31
+	tr107:
+//line internal/lexer/lexer.go.rl:80
+		l.nodes.Nest(value.Bool(l.text() == "true"))
+		goto st31
+	tr101:
+//line internal/lexer/lexer.go.rl:80
+		l.nodes.Nest(value.Bool(l.text() == "true"))
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
 		goto st31
 	st31:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof31
 		}
 	st_case_31:
-//line internal/lexer/lexer.go:1139
-		switch l.data[(l.p)] {
-		case 34:
-			goto tr66
-		case 92:
-			goto st60
-		}
-		goto st31
-	tr63:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
-		goto st32
-	tr66:
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
-		goto st32
-	tr75:
-//line internal/lexer/lexer.go.rl:61
-		l.nodes.Push(l.nodes.Nest(value.Call(l.text())))
-//line internal/lexer/lexer.go.rl:98
-		{
-			l.stack[l.top] = 32
-			l.top++
-			goto st29
-		}
-		goto st32
-	tr78:
-//line internal/lexer/lexer.go.rl:98
-		{
-			l.stack[l.top] = 32
-			l.top++
-			goto st29
-		}
-		goto st32
-	tr83:
-//line internal/lexer/lexer.go.rl:59
-		l.nodes.Pop()
-		goto st32
-	tr71:
-//line internal/lexer/lexer.go.rl:64
-
-		n64, perr = strconv.ParseInt(l.text(), 10, 64)
-		if perr != nil {
-			{
-				(l.p)++
-				l.cs = 32
-				goto _out
-			}
-		}
-		l.nodes.Nest(value.Int(n64))
-
-		goto st32
-	tr97:
-//line internal/lexer/lexer.go.rl:64
-
-		n64, perr = strconv.ParseInt(l.text(), 10, 64)
-		if perr != nil {
-			{
-				(l.p)++
-				l.cs = 32
-				goto _out
-			}
-		}
-		l.nodes.Nest(value.Int(n64))
-
-//line internal/lexer/lexer.go.rl:59
-		l.nodes.Pop()
-		goto st32
-	tr110:
-//line internal/lexer/lexer.go.rl:71
-		l.nodes.Nest(value.Bool(l.text() == "true"))
-		goto st32
-	tr104:
-//line internal/lexer/lexer.go.rl:71
-		l.nodes.Nest(value.Bool(l.text() == "true"))
-//line internal/lexer/lexer.go.rl:59
-		l.nodes.Pop()
-		goto st32
-	st32:
-		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof32
-		}
-	st_case_32:
-//line internal/lexer/lexer.go:1208
+//line internal/lexer/lexer.go:1233
 		switch l.data[(l.p)] {
 		case 32:
-			goto st32
+			goto st31
 		case 41:
-			goto tr55
+			goto tr52
 		case 44:
-			goto st33
+			goto st32
 		}
 		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-			goto st32
+			goto st31
 		}
 		goto st0
-	tr55:
-//line internal/lexer/lexer.go.rl:59
+	tr52:
+//line internal/lexer/lexer.go.rl:61
 		l.nodes.Pop()
-//line internal/lexer/lexer.go.rl:100
+//line internal/lexer/lexer.go.rl:110
 		{
 			l.top--
 			l.cs = l.stack[l.top]
 			goto _again
 		}
 		goto st64
-	tr72:
-//line internal/lexer/lexer.go.rl:64
+	tr63:
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 64
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
+//line internal/lexer/lexer.go.rl:61
+		l.nodes.Pop()
+//line internal/lexer/lexer.go.rl:110
+		{
+			l.top--
+			l.cs = l.stack[l.top]
+			goto _again
+		}
+		goto st64
+	tr69:
+//line internal/lexer/lexer.go.rl:73
 
 		n64, perr = strconv.ParseInt(l.text(), 10, 64)
 		if perr != nil {
@@ -1271,21 +1339,21 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 		}
 		l.nodes.Nest(value.Int(n64))
 
-//line internal/lexer/lexer.go.rl:59
+//line internal/lexer/lexer.go.rl:61
 		l.nodes.Pop()
-//line internal/lexer/lexer.go.rl:100
+//line internal/lexer/lexer.go.rl:110
 		{
 			l.top--
 			l.cs = l.stack[l.top]
 			goto _again
 		}
 		goto st64
-	tr111:
-//line internal/lexer/lexer.go.rl:71
+	tr108:
+//line internal/lexer/lexer.go.rl:80
 		l.nodes.Nest(value.Bool(l.text() == "true"))
-//line internal/lexer/lexer.go.rl:59
+//line internal/lexer/lexer.go.rl:61
 		l.nodes.Pop()
-//line internal/lexer/lexer.go.rl:100
+//line internal/lexer/lexer.go.rl:110
 		{
 			l.top--
 			l.cs = l.stack[l.top]
@@ -1297,70 +1365,99 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof64
 		}
 	st_case_64:
-//line internal/lexer/lexer.go:1254
+//line internal/lexer/lexer.go:1294
 		goto st0
-	tr73:
-//line internal/lexer/lexer.go.rl:64
+	tr64:
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 32
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
+		goto st32
+	tr70:
+//line internal/lexer/lexer.go.rl:73
 
 		n64, perr = strconv.ParseInt(l.text(), 10, 64)
 		if perr != nil {
 			{
 				(l.p)++
-				l.cs = 33
+				l.cs = 32
 				goto _out
 			}
 		}
 		l.nodes.Nest(value.Int(n64))
 
-		goto st33
-	tr112:
-//line internal/lexer/lexer.go.rl:71
+		goto st32
+	tr109:
+//line internal/lexer/lexer.go.rl:80
 		l.nodes.Nest(value.Bool(l.text() == "true"))
+		goto st32
+	st32:
+		if (l.p)++; (l.p) == (l.pe) {
+			goto _test_eof32
+		}
+	st_case_32:
+//line internal/lexer/lexer.go:1326
+		switch l.data[(l.p)] {
+		case 32:
+			goto st32
+		case 34:
+			goto tr51
+		case 43:
+			goto tr53
+		case 45:
+			goto tr53
+		case 91:
+			goto tr56
+		case 95:
+			goto tr55
+		case 102:
+			goto tr57
+		case 116:
+			goto tr58
+		}
+		switch {
+		case l.data[(l.p)] < 48:
+			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+				goto st32
+			}
+		case l.data[(l.p)] > 57:
+			switch {
+			case l.data[(l.p)] > 90:
+				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
+					goto tr55
+				}
+			case l.data[(l.p)] >= 65:
+				goto tr55
+			}
+		default:
+			goto tr54
+		}
+		goto st0
+	tr53:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
 		goto st33
 	st33:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof33
 		}
 	st_case_33:
-//line internal/lexer/lexer.go:1275
-		switch l.data[(l.p)] {
-		case 32:
-			goto st33
-		case 34:
-			goto st30
-		case 43:
-			goto tr56
-		case 45:
-			goto tr56
-		case 91:
-			goto tr59
-		case 95:
-			goto tr58
-		case 102:
-			goto tr60
-		case 116:
-			goto tr61
-		}
-		switch {
-		case l.data[(l.p)] < 48:
-			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto st33
-			}
-		case l.data[(l.p)] > 57:
-			switch {
-			case l.data[(l.p)] > 90:
-				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto tr58
-				}
-			case l.data[(l.p)] >= 65:
-				goto tr58
-			}
-		default:
-			goto tr57
+//line internal/lexer/lexer.go:1372
+		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+			goto st34
 		}
 		goto st0
-	tr56:
-//line internal/lexer/lexer.go.rl:57
+	tr54:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st34
 	st34:
@@ -1368,13 +1465,26 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof34
 		}
 	st_case_34:
-//line internal/lexer/lexer.go:1321
-		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-			goto st35
+//line internal/lexer/lexer.go:1386
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr68
+		case 41:
+			goto tr69
+		case 44:
+			goto tr70
+		}
+		switch {
+		case l.data[(l.p)] > 13:
+			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+				goto st34
+			}
+		case l.data[(l.p)] >= 9:
+			goto tr68
 		}
 		goto st0
-	tr57:
-//line internal/lexer/lexer.go.rl:57
+	tr55:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st35
 	st35:
@@ -1382,156 +1492,190 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof35
 		}
 	st_case_35:
-//line internal/lexer/lexer.go:1335
+//line internal/lexer/lexer.go:1413
 		switch l.data[(l.p)] {
 		case 32:
 			goto tr71
-		case 41:
+		case 40:
 			goto tr72
-		case 44:
-			goto tr73
+		case 95:
+			goto st35
 		}
 		switch {
-		case l.data[(l.p)] > 13:
-			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+		case l.data[(l.p)] < 48:
+			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+				goto tr71
+			}
+		case l.data[(l.p)] > 57:
+			switch {
+			case l.data[(l.p)] > 90:
+				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
+					goto st35
+				}
+			case l.data[(l.p)] >= 65:
 				goto st35
 			}
-		case l.data[(l.p)] >= 9:
-			goto tr71
+		default:
+			goto st35
 		}
 		goto st0
-	tr58:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
+	tr71:
+//line internal/lexer/lexer.go.rl:63
+		l.nodes.Push(l.nodes.Nest(value.Call(l.text())))
 		goto st36
 	st36:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof36
 		}
 	st_case_36:
-//line internal/lexer/lexer.go:1362
+//line internal/lexer/lexer.go:1449
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr74
+			goto st36
 		case 40:
 			goto tr75
-		case 95:
-			goto st36
 		}
-		switch {
-		case l.data[(l.p)] < 48:
-			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr74
-			}
-		case l.data[(l.p)] > 57:
-			switch {
-			case l.data[(l.p)] > 90:
-				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
-				}
-			case l.data[(l.p)] >= 65:
-				goto st36
-			}
-		default:
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
 			goto st36
 		}
 		goto st0
-	tr74:
-//line internal/lexer/lexer.go.rl:61
-		l.nodes.Push(l.nodes.Nest(value.Call(l.text())))
+	tr56:
+//line internal/lexer/lexer.go.rl:64
+		l.nodes.Push(l.nodes.Nest(value.Arr()))
 		goto st37
 	st37:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof37
 		}
 	st_case_37:
-//line internal/lexer/lexer.go:1398
+//line internal/lexer/lexer.go:1469
 		switch l.data[(l.p)] {
 		case 32:
 			goto st37
-		case 40:
+		case 34:
+			goto tr77
+		case 43:
 			goto tr78
+		case 45:
+			goto tr78
+		case 93:
+			goto tr80
+		case 102:
+			goto tr81
+		case 116:
+			goto tr82
 		}
-		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+		switch {
+		case l.data[(l.p)] > 13:
+			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+				goto tr79
+			}
+		case l.data[(l.p)] >= 9:
 			goto st37
 		}
 		goto st0
-	tr59:
-//line internal/lexer/lexer.go.rl:62
-		l.nodes.Push(l.nodes.Nest(value.Arr()))
+	tr77:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
 		goto st38
 	st38:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof38
 		}
 	st_case_38:
-//line internal/lexer/lexer.go:1418
+//line internal/lexer/lexer.go:1504
 		switch l.data[(l.p)] {
-		case 32:
-			goto st38
 		case 34:
 			goto st39
-		case 43:
-			goto tr81
-		case 45:
-			goto tr81
-		case 93:
-			goto tr83
-		case 102:
-			goto tr84
-		case 116:
-			goto tr85
+		case 92:
+			goto st51
 		}
-		switch {
-		case l.data[(l.p)] > 13:
-			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-				goto tr82
-			}
-		case l.data[(l.p)] >= 9:
-			goto st38
-		}
-		goto st0
+		goto st38
 	st39:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof39
 		}
 	st_case_39:
 		switch l.data[(l.p)] {
-		case 34:
+		case 32:
+			goto tr86
+		case 44:
 			goto tr87
-		case 92:
+		case 93:
 			goto tr88
 		}
-		goto tr86
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+			goto tr86
+		}
+		goto st0
 	tr86:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 40
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
+		goto st40
+	tr92:
+//line internal/lexer/lexer.go.rl:73
+
+		n64, perr = strconv.ParseInt(l.text(), 10, 64)
+		if perr != nil {
+			{
+				(l.p)++
+				l.cs = 40
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Int(n64))
+
+		goto st40
+	tr99:
+//line internal/lexer/lexer.go.rl:80
+		l.nodes.Nest(value.Bool(l.text() == "true"))
 		goto st40
 	st40:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof40
 		}
 	st_case_40:
-//line internal/lexer/lexer.go:1465
+//line internal/lexer/lexer.go:1559
 		switch l.data[(l.p)] {
-		case 34:
-			goto tr90
-		case 92:
-			goto st52
+		case 32:
+			goto st40
+		case 44:
+			goto st41
+		case 93:
+			goto tr80
 		}
-		goto st40
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+			goto st40
+		}
+		goto st0
 	tr87:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
+//line internal/lexer/lexer.go.rl:65
+
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			{
+				(l.p)++
+				l.cs = 41
+				goto _out
+			}
+		}
+		l.nodes.Nest(value.Str(str))
+
 		goto st41
-	tr90:
-//line internal/lexer/lexer.go.rl:63
-		l.nodes.Nest(value.Str(l.text()))
-		goto st41
-	tr95:
-//line internal/lexer/lexer.go.rl:64
+	tr93:
+//line internal/lexer/lexer.go.rl:73
 
 		n64, perr = strconv.ParseInt(l.text(), 10, 64)
 		if perr != nil {
@@ -1544,8 +1688,8 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 		l.nodes.Nest(value.Int(n64))
 
 		goto st41
-	tr102:
-//line internal/lexer/lexer.go.rl:71
+	tr100:
+//line internal/lexer/lexer.go.rl:80
 		l.nodes.Nest(value.Bool(l.text() == "true"))
 		goto st41
 	st41:
@@ -1553,68 +1697,46 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof41
 		}
 	st_case_41:
-//line internal/lexer/lexer.go:1502
+//line internal/lexer/lexer.go:1602
 		switch l.data[(l.p)] {
 		case 32:
 			goto st41
-		case 44:
-			goto st42
-		case 93:
-			goto tr83
+		case 34:
+			goto tr77
+		case 43:
+			goto tr78
+		case 45:
+			goto tr78
+		case 102:
+			goto tr81
+		case 116:
+			goto tr82
 		}
-		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+		switch {
+		case l.data[(l.p)] > 13:
+			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+				goto tr79
+			}
+		case l.data[(l.p)] >= 9:
 			goto st41
 		}
 		goto st0
-	tr96:
-//line internal/lexer/lexer.go.rl:64
-
-		n64, perr = strconv.ParseInt(l.text(), 10, 64)
-		if perr != nil {
-			{
-				(l.p)++
-				l.cs = 42
-				goto _out
-			}
-		}
-		l.nodes.Nest(value.Int(n64))
-
-		goto st42
-	tr103:
-//line internal/lexer/lexer.go.rl:71
-		l.nodes.Nest(value.Bool(l.text() == "true"))
+	tr78:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
 		goto st42
 	st42:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof42
 		}
 	st_case_42:
-//line internal/lexer/lexer.go:1534
-		switch l.data[(l.p)] {
-		case 32:
-			goto st42
-		case 34:
-			goto st39
-		case 43:
-			goto tr81
-		case 45:
-			goto tr81
-		case 102:
-			goto tr84
-		case 116:
-			goto tr85
-		}
-		switch {
-		case l.data[(l.p)] > 13:
-			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-				goto tr82
-			}
-		case l.data[(l.p)] >= 9:
-			goto st42
+//line internal/lexer/lexer.go:1635
+		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+			goto st43
 		}
 		goto st0
-	tr81:
-//line internal/lexer/lexer.go.rl:57
+	tr79:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st43
 	st43:
@@ -1622,13 +1744,26 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof43
 		}
 	st_case_43:
-//line internal/lexer/lexer.go:1567
-		if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-			goto st44
+//line internal/lexer/lexer.go:1649
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr92
+		case 44:
+			goto tr93
+		case 93:
+			goto tr94
+		}
+		switch {
+		case l.data[(l.p)] > 13:
+			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
+				goto st43
+			}
+		case l.data[(l.p)] >= 9:
+			goto tr92
 		}
 		goto st0
-	tr82:
-//line internal/lexer/lexer.go.rl:57
+	tr81:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st44
 	st44:
@@ -1636,35 +1771,17 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof44
 		}
 	st_case_44:
-//line internal/lexer/lexer.go:1581
-		switch l.data[(l.p)] {
-		case 32:
-			goto tr95
-		case 44:
-			goto tr96
-		case 93:
-			goto tr97
-		}
-		switch {
-		case l.data[(l.p)] > 13:
-			if 48 <= l.data[(l.p)] && l.data[(l.p)] <= 57 {
-				goto st44
-			}
-		case l.data[(l.p)] >= 9:
-			goto tr95
+//line internal/lexer/lexer.go:1676
+		if l.data[(l.p)] == 97 {
+			goto st45
 		}
 		goto st0
-	tr84:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st45
 	st45:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof45
 		}
 	st_case_45:
-//line internal/lexer/lexer.go:1608
-		if l.data[(l.p)] == 97 {
+		if l.data[(l.p)] == 108 {
 			goto st46
 		}
 		goto st0
@@ -1673,7 +1790,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof46
 		}
 	st_case_46:
-		if l.data[(l.p)] == 108 {
+		if l.data[(l.p)] == 115 {
 			goto st47
 		}
 		goto st0
@@ -1682,7 +1799,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof47
 		}
 	st_case_47:
-		if l.data[(l.p)] == 115 {
+		if l.data[(l.p)] == 101 {
 			goto st48
 		}
 		goto st0
@@ -1691,39 +1808,39 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof48
 		}
 	st_case_48:
-		if l.data[(l.p)] == 101 {
-			goto st49
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr99
+		case 44:
+			goto tr100
+		case 93:
+			goto tr101
+		}
+		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+			goto tr99
 		}
 		goto st0
+	tr82:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
+		goto st49
 	st49:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof49
 		}
 	st_case_49:
-		switch l.data[(l.p)] {
-		case 32:
-			goto tr102
-		case 44:
-			goto tr103
-		case 93:
-			goto tr104
-		}
-		if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-			goto tr102
+//line internal/lexer/lexer.go:1734
+		if l.data[(l.p)] == 114 {
+			goto st50
 		}
 		goto st0
-	tr85:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st50
 	st50:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof50
 		}
 	st_case_50:
-//line internal/lexer/lexer.go:1666
-		if l.data[(l.p)] == 114 {
-			goto st51
+		if l.data[(l.p)] == 117 {
+			goto st47
 		}
 		goto st0
 	st51:
@@ -1731,12 +1848,9 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof51
 		}
 	st_case_51:
-		if l.data[(l.p)] == 117 {
-			goto st48
-		}
-		goto st0
-	tr88:
-//line internal/lexer/lexer.go.rl:57
+		goto st38
+	tr57:
+//line internal/lexer/lexer.go.rl:59
 		l.pb = l.p
 		goto st52
 	st52:
@@ -1744,44 +1858,66 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof52
 		}
 	st_case_52:
-//line internal/lexer/lexer.go:1689
-		goto st40
-	tr60:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st53
-	st53:
-		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof53
-		}
-	st_case_53:
-//line internal/lexer/lexer.go:1700
+//line internal/lexer/lexer.go:1763
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr74
+			goto tr71
 		case 40:
-			goto tr75
+			goto tr72
 		case 95:
-			goto st36
+			goto st35
 		case 97:
-			goto st54
+			goto st53
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr74
+				goto tr71
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 98 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
+					goto st35
 				}
 			case l.data[(l.p)] >= 65:
-				goto st36
+				goto st35
 			}
 		default:
-			goto st36
+			goto st35
+		}
+		goto st0
+	st53:
+		if (l.p)++; (l.p) == (l.pe) {
+			goto _test_eof53
+		}
+	st_case_53:
+		switch l.data[(l.p)] {
+		case 32:
+			goto tr71
+		case 40:
+			goto tr72
+		case 95:
+			goto st35
+		case 108:
+			goto st54
+		}
+		switch {
+		case l.data[(l.p)] < 48:
+			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
+				goto tr71
+			}
+		case l.data[(l.p)] > 57:
+			switch {
+			case l.data[(l.p)] > 90:
+				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
+					goto st35
+				}
+			case l.data[(l.p)] >= 65:
+				goto st35
+			}
+		default:
+			goto st35
 		}
 		goto st0
 	st54:
@@ -1791,30 +1927,30 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	st_case_54:
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr74
+			goto tr71
 		case 40:
-			goto tr75
+			goto tr72
 		case 95:
-			goto st36
-		case 108:
+			goto st35
+		case 115:
 			goto st55
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr74
+				goto tr71
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
+					goto st35
 				}
 			case l.data[(l.p)] >= 65:
-				goto st36
+				goto st35
 			}
 		default:
-			goto st36
+			goto st35
 		}
 		goto st0
 	st55:
@@ -1824,30 +1960,30 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	st_case_55:
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr74
+			goto tr71
 		case 40:
-			goto tr75
+			goto tr72
 		case 95:
-			goto st36
-		case 115:
+			goto st35
+		case 101:
 			goto st56
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr74
+				goto tr71
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
+					goto st35
 				}
 			case l.data[(l.p)] >= 65:
-				goto st36
+				goto st35
 			}
 		default:
-			goto st36
+			goto st35
 		}
 		goto st0
 	st56:
@@ -1857,101 +1993,101 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	st_case_56:
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr74
-		case 40:
-			goto tr75
+			goto tr107
+		case 41:
+			goto tr108
+		case 44:
+			goto tr109
 		case 95:
-			goto st36
-		case 101:
-			goto st57
+			goto st35
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr74
+				goto tr107
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
+					goto st35
 				}
 			case l.data[(l.p)] >= 65:
-				goto st36
+				goto st35
 			}
 		default:
-			goto st36
+			goto st35
 		}
 		goto st0
+	tr58:
+//line internal/lexer/lexer.go.rl:59
+		l.pb = l.p
+		goto st57
 	st57:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof57
 		}
 	st_case_57:
+//line internal/lexer/lexer.go:1933
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr110
-		case 41:
-			goto tr111
-		case 44:
-			goto tr112
+			goto tr71
+		case 40:
+			goto tr72
 		case 95:
-			goto st36
+			goto st35
+		case 114:
+			goto st58
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr110
+				goto tr71
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
+					goto st35
 				}
 			case l.data[(l.p)] >= 65:
-				goto st36
+				goto st35
 			}
 		default:
-			goto st36
+			goto st35
 		}
 		goto st0
-	tr61:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st58
 	st58:
 		if (l.p)++; (l.p) == (l.pe) {
 			goto _test_eof58
 		}
 	st_case_58:
-//line internal/lexer/lexer.go:1870
 		switch l.data[(l.p)] {
 		case 32:
-			goto tr74
+			goto tr71
 		case 40:
-			goto tr75
+			goto tr72
 		case 95:
-			goto st36
-		case 114:
-			goto st59
+			goto st35
+		case 117:
+			goto st55
 		}
 		switch {
 		case l.data[(l.p)] < 48:
 			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr74
+				goto tr71
 			}
 		case l.data[(l.p)] > 57:
 			switch {
 			case l.data[(l.p)] > 90:
 				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
+					goto st35
 				}
 			case l.data[(l.p)] >= 65:
-				goto st36
+				goto st35
 			}
 		default:
-			goto st36
+			goto st35
 		}
 		goto st0
 	st59:
@@ -1959,45 +2095,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 			goto _test_eof59
 		}
 	st_case_59:
-		switch l.data[(l.p)] {
-		case 32:
-			goto tr74
-		case 40:
-			goto tr75
-		case 95:
-			goto st36
-		case 117:
-			goto st56
-		}
-		switch {
-		case l.data[(l.p)] < 48:
-			if 9 <= l.data[(l.p)] && l.data[(l.p)] <= 13 {
-				goto tr74
-			}
-		case l.data[(l.p)] > 57:
-			switch {
-			case l.data[(l.p)] > 90:
-				if 97 <= l.data[(l.p)] && l.data[(l.p)] <= 122 {
-					goto st36
-				}
-			case l.data[(l.p)] >= 65:
-				goto st36
-			}
-		default:
-			goto st36
-		}
-		goto st0
-	tr64:
-//line internal/lexer/lexer.go.rl:57
-		l.pb = l.p
-		goto st60
-	st60:
-		if (l.p)++; (l.p) == (l.pe) {
-			goto _test_eof60
-		}
-	st_case_60:
-//line internal/lexer/lexer.go:1941
-		goto st31
+		goto st29
 	st_out:
 	_test_eof1:
 		l.cs = 1
@@ -2005,23 +2103,26 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	_test_eof2:
 		l.cs = 2
 		goto _test_eof
+	_test_eof60:
+		l.cs = 60
+		goto _test_eof
 	_test_eof3:
 		l.cs = 3
-		goto _test_eof
-	_test_eof61:
-		l.cs = 61
 		goto _test_eof
 	_test_eof4:
 		l.cs = 4
 		goto _test_eof
+	_test_eof61:
+		l.cs = 61
+		goto _test_eof
 	_test_eof5:
 		l.cs = 5
 		goto _test_eof
-	_test_eof62:
-		l.cs = 62
-		goto _test_eof
 	_test_eof6:
 		l.cs = 6
+		goto _test_eof
+	_test_eof62:
+		l.cs = 62
 		goto _test_eof
 	_test_eof7:
 		l.cs = 7
@@ -2080,11 +2181,11 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	_test_eof25:
 		l.cs = 25
 		goto _test_eof
-	_test_eof26:
-		l.cs = 26
-		goto _test_eof
 	_test_eof63:
 		l.cs = 63
+		goto _test_eof
+	_test_eof26:
+		l.cs = 26
 		goto _test_eof
 	_test_eof27:
 		l.cs = 27
@@ -2101,11 +2202,11 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	_test_eof31:
 		l.cs = 31
 		goto _test_eof
-	_test_eof32:
-		l.cs = 32
-		goto _test_eof
 	_test_eof64:
 		l.cs = 64
+		goto _test_eof
+	_test_eof32:
+		l.cs = 32
 		goto _test_eof
 	_test_eof33:
 		l.cs = 33
@@ -2188,17 +2289,28 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	_test_eof59:
 		l.cs = 59
 		goto _test_eof
-	_test_eof60:
-		l.cs = 60
-		goto _test_eof
 
 	_test_eof:
 		{
 		}
 		if (l.p) == (l.eof) {
 			switch l.cs {
-			case 62:
-//line internal/lexer/lexer.go.rl:64
+			case 60:
+//line internal/lexer/lexer.go.rl:65
+
+				str, perr = strconv.Unquote(l.text())
+				if perr != nil {
+					perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+					{
+						(l.p)++
+						l.cs = 0
+						goto _out
+					}
+				}
+				l.nodes.Nest(value.Str(str))
+
+			case 61:
+//line internal/lexer/lexer.go.rl:73
 
 				n64, perr = strconv.ParseInt(l.text(), 10, 64)
 				if perr != nil {
@@ -2211,9 +2323,9 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 				l.nodes.Nest(value.Int(n64))
 
 			case 63:
-//line internal/lexer/lexer.go.rl:71
+//line internal/lexer/lexer.go.rl:80
 				l.nodes.Nest(value.Bool(l.text() == "true"))
-//line internal/lexer/lexer.go:2024
+//line internal/lexer/lexer.go:2092
 			}
 		}
 
@@ -2222,15 +2334,15 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 		}
 	}
 
-//line internal/lexer/lexer.go.rl:106
+//line internal/lexer/lexer.go.rl:116
 
 	if l.top > 0 {
 		return nil, fmt.Errorf("stack parsing error at %d", l.pb)
 	}
 
-	if l.cs < 61 {
+	if l.cs < 60 {
 		if perr != nil {
-			return nil, fmt.Errorf("parse error at %d: %w", l.pb, perr)
+			return nil, fmt.Errorf("parsing error at %d: %w", l.pb, perr)
 		}
 		return nil, fmt.Errorf("token parsing error at %d", l.pb)
 	}

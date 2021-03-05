@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/pkg/errors"
 	"github.com/regeda/expr/internal/ast"
 	"github.com/regeda/expr/internal/ast/value"
 	"github.com/regeda/expr/internal/ast/stack"
@@ -46,6 +47,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 
 	var perr error
 	var n64 int64
+	var str string
 
 %%{
 	access l.;
@@ -60,7 +62,14 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 
 	action vm_call { l.nodes.Push(l.nodes.Nest(value.Call(l.text()))) }
 	action vm_arr { l.nodes.Push(l.nodes.Nest(value.Arr())) }
-	action vm_str { l.nodes.Nest(value.Str(l.text())) }
+	action vm_str {
+		str, perr = strconv.Unquote(l.text())
+		if perr != nil {
+			perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
+			fbreak;
+		}
+		l.nodes.Nest(value.Str(str))
+	}
 	action vm_int {
 		n64, perr = strconv.ParseInt(l.text(), 10, 64)
 		if perr != nil {
@@ -76,12 +85,13 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	str_body = not_dquote | esc_smth;
 	func_name = [A-Za-z_][A-Za-z_0-9]*;
 
-	num = ( ('+'|'-')? digit+ ) >mark %vm_int;
-	str = '"' str_body* >mark %vm_str '"';
+	int = ( ('+'|'-')? digit+ ) >mark %vm_int;
+	str = ('"' str_body* '"') >mark %vm_str;
 	bool = ('true' | 'false') >mark %vm_bool;
-	func = (func_name & !bool) >mark %vm_call;
+	keywords = bool;
+	func = (func_name & !keywords) >mark %vm_call;
 
-	scalar = space* (str | num | bool);
+	scalar = space* (str | int | bool);
 
 	comma = space* ',';
 
@@ -110,7 +120,7 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 
 	if l.cs < %%{ write first_final; }%% {
 		if perr != nil {
-			return nil, fmt.Errorf("parse error at %d: %w", l.pb, perr)
+			return nil, fmt.Errorf("parsing error at %d: %w", l.pb, perr)
 		}
 		return nil, fmt.Errorf("token parsing error at %d", l.pb)
 	}

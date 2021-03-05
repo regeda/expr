@@ -6,14 +6,10 @@ import (
 	"github.com/regeda/expr/internal/ast"
 )
 
-func unescapeDquote(s string) string {
-	return strings.Replace(s, `\"`, `"`, -1)
-}
-
 func Str(s string) *ast.Node {
 	return &ast.Node{
 		Token: ast.Node_STR,
-		Data:  &ast.Node_S{S: unescapeDquote(s)},
+		Data:  &ast.Node_S{S: s},
 	}
 }
 
