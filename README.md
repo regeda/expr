@@ -33,9 +33,10 @@ You can add custom functions to the executor empowering your application.
 true, false
 ```
 
-*array* (the vector of scalar data types)
+*array* (a vector of elements)
 ```js
 [1, true, "text"]
+[["hello"], "world!"]
 ```
 
 ### Delegators
@@ -162,5 +163,5 @@ equals("foo,bar,baz", join(",", ["foo", "bar", "baz"]))
 ```
 cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
 BenchmarkExec
-BenchmarkExec-8          1715553               710.2 ns/op             0 B/op          0 allocs/op
+BenchmarkExec-8          1746600               673.2 ns/op             0 B/op          0 allocs/op
 ```
