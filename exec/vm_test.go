@@ -73,6 +73,42 @@ func TestVM_Exec(t *testing.T) {
 		}
 	})
 
+	t.Run("array of array", func(t *testing.T) {
+		bcode := comp.Compile(value.Nest(
+			value.Exit(),
+			value.Nest(
+				value.Arr(),
+				value.Nest(
+					value.Arr(),
+					value.Int(0xff),
+				),
+				value.Str("foo"),
+			),
+		))
+
+		addr, err := exec.Exec(bcode)
+		require.NoError(t, err)
+		require.NotNil(t, addr)
+
+		require.Equal(t, memory.TypeVector, addr.Type())
+		assert.Equal(t, 2, addr.VectorLen())
+
+		subarrayAtPos0 := addr.VectorAt(0)
+		require.NotNil(t, subarrayAtPos0)
+		require.Equal(t, memory.TypeVector, subarrayAtPos0.Type())
+		assert.Equal(t, 1, subarrayAtPos0.VectorLen())
+
+		intAtSubarrayAtPos0 := subarrayAtPos0.VectorAt(0)
+		require.NotNil(t, intAtSubarrayAtPos0)
+		require.Equal(t, memory.TypeInt64, intAtSubarrayAtPos0.Type())
+		assert.Equal(t, int64(0xff), intAtSubarrayAtPos0.Int64())
+
+		strAtPos1 := addr.VectorAt(1)
+		require.NotNil(t, strAtPos1)
+		require.Equal(t, memory.TypeBytes, strAtPos1.Type())
+		assert.Equal(t, []byte("foo"), strAtPos1.Bytes())
+	})
+
 	t.Run("func join", func(t *testing.T) {
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
@@ -213,5 +249,16 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBool, addr.Type())
 		assert.True(t, addr.Bool())
+	})
+
+	t.Run("delegator not exists", func(t *testing.T) {
+		bcode := comp.Compile(value.Nest(
+			value.Exit(),
+			value.Call("NONAME"),
+		))
+
+		addr, err := exec.Exec(bcode)
+		require.EqualError(t, err, "failed to exec frame at 0: delegator <noname> not exists")
+		assert.Nil(t, addr)
 	})
 }

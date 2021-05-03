@@ -22,7 +22,11 @@ func TestLexer_Parse(t *testing.T) {
 		{`"\\\"foo\""`, `nested:<token:STR s:"\\\"foo\"" > `},
 		{`"\"a\" \"b\" \"c\""`, `nested:<token:STR s:"\"a\" \"b\" \"c\"" > `},
 		{"foo()", "nested:<token:CALL s:\"foo\" > "},
+		{"[]", "nested:<token:ARR > "},
 		{"[1,2]", "nested:<token:ARR nested:<token:INT i:1 > nested:<token:INT i:2 > > "},
+		{"[[]]", "nested:<token:ARR nested:<token:ARR > > "},
+		{"[ [ ] ]", "nested:<token:ARR nested:<token:ARR > > "},
+		{"[foo()]", "nested:<token:ARR nested:<token:CALL s:\"foo\" > > "},
 		{"foo([1])", "nested:<token:CALL s:\"foo\" nested:<token:ARR nested:<token:INT i:1 > > > "},
 		{"foo(bar(true))", "nested:<token:CALL s:\"foo\" nested:<token:CALL s:\"bar\" nested:<token:BOOL b:true > > > "},
 		{`foo("bar", baz(1))`, "nested:<token:CALL s:\"foo\" nested:<token:STR s:\"bar\" > nested:<token:CALL s:\"baz\" nested:<token:INT i:1 > > > "},
@@ -64,12 +68,13 @@ func TestLexer_CouldNotParse(t *testing.T) {
 		{"1()", "token parsing error at 0"},
 		{`"foo"()`, "token parsing error at 0"},
 		{"foo(", "stack parsing error at 0"},
-		{"[1,2", "token parsing error at 3"},
+		{"[1,2", "stack parsing error at 3"},
 		{`"foo`, "token parsing error at 0"},
 		{`"foo\"`, "token parsing error at 0"},
 		{"foo(bar(1)", "stack parsing error at 8"},
-		{"[foo()]", "token parsing error at 1"},
-		{"[1 1]", "token parsing error at 1"},
+		{"[1 1]", "stack parsing error at 1"},
+		{"[[]", "stack parsing error at 0"},
+		{"[foo(])", "stack parsing error at 1"},
 	}
 
 	l := lexer.New()

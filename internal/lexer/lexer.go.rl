@@ -103,13 +103,13 @@ func (l *Lexer) Parse(input []byte) (*ast.Node, error) {
 	osbr = space* '[';
 	csbr = space* ']';
 
-	array = osbr @vm_arr ( scalar (comma scalar)* )? csbr @vm_go_up;
-	opt = scalar | array;
+	array = osbr @vm_arr @{ fcall array_rest; };
 	invoke = space* func orbr @{ fcall invoke_rest; };
-	opts = opt | invoke;
+	opts = scalar | array | invoke;
+	array_rest := ( opts (comma opts)* )? csbr @vm_go_up @{ fret; };
 	invoke_rest := ( opts (comma opts)* )? crbr @vm_go_up @{ fret; };
 
-	main := scalar | array | invoke;
+	main := opts;
 
 	write init;
 	write exec;
