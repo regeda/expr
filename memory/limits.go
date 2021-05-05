@@ -2,11 +2,11 @@ package memory
 
 const (
 	// HeapLimit sets the maximum number of bytes.
-	HeapLimit uint32 = 0xffff
+	HeapLimit uint32 = 65536
 	// GridLimit sets the maximum number of addresses.
-	GridLimit uint32 = 512
+	GridLimit uint32 = 1024
 	// LinksLimit sets the maximum number of pointers.
-	LinksLimit uint32 = 512
+	LinksLimit uint32 = 1024
 
 	sizeInt8  = 1
 	sizeInt16 = sizeInt8 << 1
