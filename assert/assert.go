@@ -11,17 +11,17 @@ var (
 )
 
 type Asserter interface {
-	Assert([]*memory.Addr) error
+	Assert([]memory.Addr) error
 }
 
-type AsserterFunc func([]*memory.Addr) error
+type AsserterFunc func([]memory.Addr) error
 
-func (a AsserterFunc) Assert(argv []*memory.Addr) error {
+func (a AsserterFunc) Assert(argv []memory.Addr) error {
 	return a(argv)
 }
 
 func Len(l int) AsserterFunc {
-	return func(argv []*memory.Addr) error {
+	return func(argv []memory.Addr) error {
 		if len(argv) != l {
 			return errWrongArgsNumber
 		}
@@ -30,7 +30,7 @@ func Len(l int) AsserterFunc {
 }
 
 func TypeAt(i int, t memory.Type) AsserterFunc {
-	return func(argv []*memory.Addr) error {
+	return func(argv []memory.Addr) error {
 		if argv[i].Type() != t {
 			return errWrongArgType
 		}
@@ -39,13 +39,13 @@ func TypeAt(i int, t memory.Type) AsserterFunc {
 }
 
 func VectorAt(i int, a Asserter) AsserterFunc {
-	return func(argv []*memory.Addr) error {
+	return func(argv []memory.Addr) error {
 		return a.Assert(argv[i].Vector())
 	}
 }
 
 func Type(t memory.Type) AsserterFunc {
-	return func(argv []*memory.Addr) error {
+	return func(argv []memory.Addr) error {
 		for _, arg := range argv {
 			if arg.Type() != t {
 				return errWrongArgType
@@ -56,7 +56,7 @@ func Type(t memory.Type) AsserterFunc {
 }
 
 func Any(a ...Asserter) AsserterFunc {
-	return func(argv []*memory.Addr) error {
+	return func(argv []memory.Addr) error {
 		var lastErr error
 		for _, aa := range a {
 			err := aa.Assert(argv)
@@ -70,7 +70,7 @@ func Any(a ...Asserter) AsserterFunc {
 }
 
 func Every(a ...Asserter) AsserterFunc {
-	return func(argv []*memory.Addr) error {
+	return func(argv []memory.Addr) error {
 		for _, aa := range a {
 			if err := aa.Assert(argv); err != nil {
 				return err

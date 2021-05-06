@@ -2,13 +2,15 @@ package memory
 
 // Memory types supported by the virtual machine.
 const (
-	TypeBytes Type = iota
+	TypeNil Type = iota
+	TypeBytes
 	TypeInt64
 	TypeBool
 	TypeVector
 )
 
 var typeNames = [...]string{
+	"nil",
 	"bytes",
 	"int64",
 	"bool",

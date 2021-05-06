@@ -50,29 +50,29 @@ func init() {
 
 }
 
-func equals(mem *memory.Memory, argv []*memory.Addr) (*memory.Addr, error) {
+func equals(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	if argv[0].EqualBytes(argv[1]) {
-		return memory.ConstTrue, nil
+		return memory.True, nil
 	}
-	return memory.ConstFalse, nil
+	return memory.False, nil
 }
 
-func contains(mem *memory.Memory, argv []*memory.Addr) (*memory.Addr, error) {
+func contains(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	for _, p := range argv[0].Vector() {
 		if p.EqualBytes(argv[1]) {
-			return memory.ConstTrue, nil
+			return memory.True, nil
 		}
 	}
-	return memory.ConstFalse, nil
+	return memory.False, nil
 }
 
-func intersects(mem *memory.Memory, argv []*memory.Addr) (*memory.Addr, error) {
+func intersects(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	for _, a := range argv[0].Vector() {
 		for _, b := range argv[1].Vector() {
 			if a.EqualBytes(b) {
-				return memory.ConstTrue, nil
+				return memory.True, nil
 			}
 		}
 	}
-	return memory.ConstFalse, nil
+	return memory.False, nil
 }

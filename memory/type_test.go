@@ -14,6 +14,7 @@ func Test_Type_String(t *testing.T) {
 		typ      memory.Type
 		expected string
 	}{
+		{memory.TypeNil, "nil"},
 		{memory.TypeBytes, "bytes"},
 		{memory.TypeInt64, "int64"},
 		{memory.TypeBool, "bool"},
