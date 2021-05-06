@@ -163,5 +163,5 @@ equals("foo,bar,baz", join(",", ["foo", "bar", "baz"]))
 ```
 cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
 BenchmarkExec
-BenchmarkExec-8          1746600               673.2 ns/op             0 B/op          0 allocs/op
+BenchmarkExec-8          1318488               887.4 ns/op             0 B/op          0 allocs/op
 ```

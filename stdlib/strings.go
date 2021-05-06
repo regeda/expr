@@ -19,32 +19,26 @@ func init() {
 	)))
 }
 
-func concat(mem *memory.Memory, argv []*memory.Addr) (*memory.Addr, error) {
+func concat(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	var size uint32
 	for _, a := range argv {
 		size += a.Size()
 	}
-	addr, err := mem.AllocBytes(size)
-	if err != nil {
-		return nil, err
-	}
+	addr := mem.AllocBytes(size)
 	addr.CopyBytes(argv...)
 	return addr, nil
 }
 
-func join(mem *memory.Memory, argv []*memory.Addr) (*memory.Addr, error) {
+func join(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	sep, srcs := argv[0], argv[1].Vector()
 	if len(srcs) == 0 {
-		return memory.ConstNoBytes, nil
+		return memory.NoBytes, nil
 	}
 	size := sep.Size() * uint32(len(srcs)-1)
 	for _, src := range srcs {
 		size += src.Size()
 	}
-	addr, err := mem.AllocBytes(size)
-	if err != nil {
-		return nil, err
-	}
+	addr := mem.AllocBytes(size)
 	buf := addr.Bytes()
 	var offset uint32
 	for i, src := range srcs {

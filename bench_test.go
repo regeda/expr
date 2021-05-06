@@ -6,12 +6,21 @@ import (
 	"github.com/regeda/expr/exec"
 	"github.com/regeda/expr/internal/ast/value"
 	"github.com/regeda/expr/internal/compiler"
+	"github.com/regeda/expr/memory"
 	"github.com/regeda/expr/stdlib"
 )
 
 func BenchmarkExec(b *testing.B) {
 	comp := compiler.New()
-	vm := exec.New(stdlib.Registry())
+	vm := exec.New(stdlib.Registry(),
+		exec.WithStackSize(0xff),
+		exec.WithMemory(
+			memory.New(
+				memory.PreallocHeap(0xff),
+				memory.PreallocGrid(0xff),
+			),
+		),
+	)
 
 	bcode := comp.Compile(value.Nest(
 		value.Exit(),

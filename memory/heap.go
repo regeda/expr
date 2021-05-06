@@ -1,25 +1,27 @@
 package memory
 
-import "fmt"
-
 type heap struct {
-	p   uint32
-	buf [HeapLimit]byte
+	off uint32
+	buf []byte
 }
 
-func (h *heap) size() uint32 {
-	return uint32(len(h.buf))
+func (h *heap) grow(n uint32) {
+	l := uint32(len(h.buf))
+	if h.off+n < l {
+		return
+	}
+	buf := make([]byte, 2*l+n)
+	copy(buf, h.buf)
+	h.buf = buf
 }
 
 func (h *heap) reset() {
-	h.p = 0
+	h.off = 0
 }
 
-func (h *heap) alloc(size uint32) ([]byte, error) {
-	if h.p+size > h.size() {
-		return nil, fmt.Errorf("memory: out of memory to alloc %d bytes", h.p-h.size()+size)
-	}
-	p := h.p
-	h.p += size
-	return h.buf[p:h.p], nil
+func (h *heap) alloc(n uint32) []byte {
+	h.grow(n)
+	off := h.off
+	h.off += n
+	return h.buf[off:h.off]
 }

@@ -6,38 +6,23 @@ import (
 	"github.com/regeda/expr/memory"
 )
 
-const (
-	stacklimit = 0xff
-)
-
-type stack struct {
-	p   uint32
-	seq [stacklimit]*memory.Addr
-}
+type stack []memory.Addr
 
 func (s *stack) reset() {
-	s.p = 0
+	*s = (*s)[:0]
 }
 
-func (s *stack) push(a *memory.Addr) error {
-	if s.p == uint32(len(s.seq)) {
-		return errStackOverflow
-	}
-	s.seq[s.p] = a
-	s.p++
-	return nil
+func (s *stack) push(a memory.Addr) {
+	*s = append(*s, a)
 }
 
-func (s *stack) tail(n uint32) bool {
-	return s.p-n >= 0
-}
-
-func (s *stack) pop(n uint32) ([]*memory.Addr, error) {
-	if !s.tail(n) {
+func (s *stack) pop(n uint32) ([]memory.Addr, error) {
+	l := uint32(len(*s))
+	if n > l {
 		return nil, fmt.Errorf("stack tail shorter than %d", n)
 	}
-	offset := s.p - n
-	a := s.seq[offset:s.p]
-	s.p = offset
+	offset := l - n
+	a := (*s)[offset:l]
+	*s = (*s)[:offset]
 	return a, nil
 }

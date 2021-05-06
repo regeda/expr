@@ -259,6 +259,6 @@ func TestVM_Exec(t *testing.T) {
 
 		addr, err := exec.Exec(bcode)
 		require.EqualError(t, err, "failed to exec frame at 0: delegator <noname> not exists")
-		assert.Nil(t, addr)
+		assert.Equal(t, memory.Nil, addr)
 	})
 }
