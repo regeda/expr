@@ -1,5 +1,7 @@
 package memory
 
+import "fmt"
+
 type Memory struct {
 	g grid
 	l links
@@ -29,6 +31,39 @@ func (b *Memory) allocAddr(t Type, dat []byte) (*Addr, error) {
 		typ: t,
 		dat: dat,
 	})
+}
+
+func (b *Memory) Alloc(in interface{}) (*Addr, error) {
+	switch v := in.(type) {
+	case []byte:
+		return b.AllocBytesAddr(v)
+	case string:
+		return b.AllocBytesAddr([]byte(v))
+	case int:
+		return b.AllocInt64(int64(v))
+	case int64:
+		return b.AllocInt64(v)
+	case bool:
+		if v {
+			return ConstTrue, nil
+		}
+		return ConstFalse, nil
+	case []interface{}:
+		vec, err := b.AllocVector(uint32(len(v)))
+		if err != nil {
+			return nil, err
+		}
+		for i, e := range v {
+			addr, err := b.Alloc(e)
+			if err != nil {
+				return nil, err
+			}
+			vec.SetVectorAt(i, addr)
+		}
+		return vec, nil
+	default:
+		return nil, fmt.Errorf("memory: unsupported type %T", v)
+	}
 }
 
 func (b *Memory) AllocBytesAddr(dat []byte) (*Addr, error) {
