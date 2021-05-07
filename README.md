@@ -61,12 +61,16 @@ join(", ", ["a", "b", "c"]) // "a, b, c"
 
 ###### `equals(string, string)`
 ###### `equals(int64, int64)`
+###### `equals([string, ...], [string, ...])`
+###### `equals([int64, ...], [int64, ...])`
 returns `true` if both arguments are equal
 ```js
 equals(1, 1) // true
 equals(1, 0) // false
 equals("foo", "foo") // true
 equals("foo", "bar") // false
+equals(["foo", 1], ["foo", 1]) // true
+equals(["foo"], ["bar"]) // false
 ```
 
 ###### `intersects([string, ...], [string, ...])`

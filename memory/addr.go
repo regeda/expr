@@ -75,6 +75,14 @@ func (a Addr) Type() Type {
 	return a.typ
 }
 
+func (a Addr) TypeOf(t Type) bool {
+	return a.typ == t
+}
+
+func (a Addr) EqualType(b Addr) bool {
+	return a.typ == b.typ
+}
+
 func (a Addr) EqualBytes(b Addr) bool {
 	return bytes.Equal(a.dat, b.dat)
 }

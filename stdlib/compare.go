@@ -11,8 +11,19 @@ func init() {
 		Assert(assert.Every(
 			assert.Len(2),
 			assert.Any(
-				assert.Type(memory.TypeInt64),
-				assert.Type(memory.TypeBytes),
+				assert.TypeInt64,
+				assert.TypeBytes,
+				assert.Every(
+					assert.TypeVector,
+					assert.VectorAt(0, assert.Any(
+						assert.TypeInt64,
+						assert.TypeBytes,
+					)),
+					assert.VectorAt(1, assert.Any(
+						assert.TypeInt64,
+						assert.TypeBytes,
+					)),
+				),
 			),
 		)))
 
@@ -22,11 +33,11 @@ func init() {
 			assert.TypeAt(0, memory.TypeVector),
 			assert.Any(
 				assert.Every(
-					assert.VectorAt(0, assert.Type(memory.TypeInt64)),
+					assert.VectorAt(0, assert.TypeInt64),
 					assert.TypeAt(1, memory.TypeInt64),
 				),
 				assert.Every(
-					assert.VectorAt(0, assert.Type(memory.TypeBytes)),
+					assert.VectorAt(0, assert.TypeBytes),
 					assert.TypeAt(1, memory.TypeBytes),
 				),
 			),
@@ -35,7 +46,7 @@ func init() {
 	Register("intersects", delegate.DelegatorFunc(intersects).
 		Assert(assert.Every(
 			assert.Len(2),
-			assert.Type(memory.TypeVector),
+			assert.TypeVector,
 			assert.Any(
 				assert.Every(
 					assert.VectorAt(0, assert.Type(memory.TypeInt64)),
@@ -47,10 +58,23 @@ func init() {
 				),
 			),
 		)))
-
 }
 
 func equals(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
+	if !argv[0].EqualType(argv[1]) {
+		return memory.False, nil
+	}
+	if argv[0].TypeOf(memory.TypeVector) {
+		if argv[0].VectorLen() != argv[1].VectorLen() {
+			return memory.False, nil
+		}
+		for i, a := range argv[0].Vector() {
+			if !a.EqualBytes(argv[1].VectorAt(i)) {
+				return memory.False, nil
+			}
+		}
+		return memory.True, nil
+	}
 	if argv[0].EqualBytes(argv[1]) {
 		return memory.True, nil
 	}
