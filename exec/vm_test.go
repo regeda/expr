@@ -183,6 +183,32 @@ func TestVM_Exec(t *testing.T) {
 		assert.True(t, addr.Bool())
 	})
 
+	t.Run("func equals vector", func(t *testing.T) {
+		bcode := comp.Compile(value.Nest(
+			value.Exit(),
+			value.Nest(
+				value.Call("equals"),
+				value.Nest(
+					value.Arr(),
+					value.Str("foo"),
+					value.Str("bar"),
+				),
+				value.Nest(
+					value.Arr(),
+					value.Str("foo"),
+					value.Str("bar"),
+				),
+			),
+		))
+
+		addr, err := exec.Exec(bcode)
+		require.NoError(t, err)
+		require.NotNil(t, addr)
+
+		require.Equal(t, memory.TypeBool, addr.Type())
+		assert.True(t, addr.Bool())
+	})
+
 	t.Run("func equals concat", func(t *testing.T) {
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),

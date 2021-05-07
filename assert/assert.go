@@ -10,6 +10,13 @@ var (
 	errWrongArgType    = errors.New("wrong argument type")
 )
 
+var (
+	TypeBytes  = Type(memory.TypeBytes)
+	TypeInt64  = Type(memory.TypeInt64)
+	TypeBool   = Type(memory.TypeBool)
+	TypeVector = Type(memory.TypeVector)
+)
+
 type Asserter interface {
 	Assert([]memory.Addr) error
 }
@@ -31,10 +38,10 @@ func Len(l int) AsserterFunc {
 
 func TypeAt(i int, t memory.Type) AsserterFunc {
 	return func(argv []memory.Addr) error {
-		if argv[i].Type() != t {
-			return errWrongArgType
+		if argv[i].TypeOf(t) {
+			return nil
 		}
-		return nil
+		return errWrongArgType
 	}
 }
 
@@ -47,7 +54,7 @@ func VectorAt(i int, a Asserter) AsserterFunc {
 func Type(t memory.Type) AsserterFunc {
 	return func(argv []memory.Addr) error {
 		for _, arg := range argv {
-			if arg.Type() != t {
+			if !arg.TypeOf(t) {
 				return errWrongArgType
 			}
 		}

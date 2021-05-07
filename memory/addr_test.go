@@ -37,6 +37,15 @@ func TestAddr_CopyBytes(t *testing.T) {
 	assert.Equal(t, []byte{1, 2, 3, 4, 5, 6}, addrX.Bytes())
 }
 
+func TestAddr_TypeOf(t *testing.T) {
+	assert.True(t, memory.True.TypeOf(memory.TypeBool))
+	assert.False(t, memory.True.TypeOf(memory.TypeNil))
+}
+
+func TestAddr_EqualType(t *testing.T) {
+	assert.True(t, memory.True.EqualType(memory.False))
+}
+
 func TestAddr_EqualBytes(t *testing.T) {
 	assert.True(t, memory.True.EqualBytes(memory.True))
 	assert.False(t, memory.True.EqualBytes(memory.False))

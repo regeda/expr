@@ -8,14 +8,14 @@ import (
 
 func init() {
 	Register("concat", delegate.DelegatorFunc(concat).Assert(
-		assert.Type(memory.TypeBytes),
+		assert.TypeBytes,
 	))
 
 	Register("join", delegate.DelegatorFunc(join).Assert(assert.Every(
 		assert.Len(2),
 		assert.TypeAt(0, memory.TypeBytes),
 		assert.TypeAt(1, memory.TypeVector),
-		assert.VectorAt(1, assert.Type(memory.TypeBytes)),
+		assert.VectorAt(1, assert.TypeBytes),
 	)))
 }
 

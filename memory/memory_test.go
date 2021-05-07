@@ -12,7 +12,6 @@ var mem memory.Memory
 
 func TestMemory_AllocBytes(t *testing.T) {
 	t.Run("alloc zero", func(t *testing.T) {
-
 		addr := mem.AllocBytes(0)
 		assert.Equal(t, uint32(0), addr.Size())
 	})
