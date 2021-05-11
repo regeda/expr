@@ -4,15 +4,15 @@ default: test
 
 gen-proto:
 	@go install github.com/gogo/protobuf/protoc-gen-gogofaster
-	@protoc --gogofaster_out=. ./internal/ast/ast.proto
+	@protoc --gogofaster_out=. ./ast/ast.proto
 
 gen-fbs:
-	@rm -f internal/bytecode/*.go
-	@flatc -g -o internal/ internal/bytecode/proto.fbs
+	@rm -f bytecode/*.go
+	@flatc -g -o . bytecode/proto.fbs
 
 gen-lexer: gen-proto
-	@ragel -Z -G2 internal/lexer/lexer.go.rl -o internal/lexer/lexer.go
-	@goimports -w internal/lexer/lexer.go
+	@ragel -Z -G2 lexer/lexer.go.rl -o lexer/lexer.go
+	@goimports -w lexer/lexer.go
 
 test: gen-fbs gen-lexer
 	@go test -v -cover ./...

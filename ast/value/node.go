@@ -3,7 +3,7 @@ package value
 import (
 	"strings"
 
-	"github.com/regeda/expr/internal/ast"
+	"github.com/regeda/expr/ast"
 )
 
 func Str(s string) *ast.Node {

@@ -143,13 +143,16 @@ if err != nil {
 Running:
 ```go
 import (
+    "github.com/regeda/expr/delegate"
     "github.com/regeda/expr/exec"
     "github.com/regeda/expr/stdlib"
 )
 
 bytecode := ... // read []byte
 
-ex := exec.New(stdlib.Registry())
+ex := exec.New(
+    exec.WithRegistry(delegate.Import(stdlib.Compare, stdlib.Strings)),
+)
 addr, err := ex.Exec(bytecode)
 if err != nil {
     panic(err)

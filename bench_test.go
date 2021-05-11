@@ -3,16 +3,19 @@ package expr_test
 import (
 	"testing"
 
+	"github.com/regeda/expr/ast/value"
+	"github.com/regeda/expr/compiler"
+	"github.com/regeda/expr/delegate"
 	"github.com/regeda/expr/exec"
-	"github.com/regeda/expr/internal/ast/value"
-	"github.com/regeda/expr/internal/compiler"
 	"github.com/regeda/expr/memory"
 	"github.com/regeda/expr/stdlib"
 )
 
 func BenchmarkExec(b *testing.B) {
 	comp := compiler.New()
-	vm := exec.New(stdlib.Registry(),
+
+	vm := exec.New(
+		exec.WithRegistry(delegate.Import(stdlib.Compare, stdlib.Strings)),
 		exec.WithStackSize(0xff),
 		exec.WithMemory(
 			memory.New(

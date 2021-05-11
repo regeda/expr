@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	flatbuffers "github.com/google/flatbuffers/go"
-	"github.com/regeda/expr/internal/ast"
-	"github.com/regeda/expr/internal/bytecode"
+	"github.com/regeda/expr/ast"
+	"github.com/regeda/expr/bytecode"
 )
 
 const (

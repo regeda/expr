@@ -1,8 +1,8 @@
 package asm
 
 import (
-	"github.com/regeda/expr/internal/compiler"
-	"github.com/regeda/expr/internal/lexer"
+	"github.com/regeda/expr/compiler"
+	"github.com/regeda/expr/lexer"
 )
 
 type ASM struct {

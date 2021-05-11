@@ -3,6 +3,9 @@ package memory
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
+	"io"
+	"strconv"
 )
 
 var (
@@ -85,4 +88,25 @@ func (a Addr) EqualType(b Addr) bool {
 
 func (a Addr) EqualBytes(b Addr) bool {
 	return bytes.Equal(a.dat, b.dat)
+}
+
+func (a Addr) Print(w io.Writer) {
+	fmt.Fprint(w, a.typ)
+	switch a.typ {
+	case TypeBytes:
+		fmt.Fprintf(w, "=%s", strconv.Quote(string(a.dat)))
+	case TypeBool:
+		fmt.Fprintf(w, "=%d", a.dat[0])
+	case TypeInt64:
+		fmt.Fprintf(w, "=%d", a.Int64())
+	case TypeVector:
+		fmt.Fprint(w, "=[")
+		for i, v := range a.vec {
+			if i > 0 {
+				fmt.Fprint(w, ", ")
+			}
+			v.Print(w)
+		}
+		fmt.Fprint(w, "]")
+	}
 }

@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
-	"github.com/regeda/expr/internal/ast"
-	"github.com/regeda/expr/internal/ast/value"
-	"github.com/regeda/expr/internal/ast/stack"
+	"github.com/regeda/expr/ast"
+	"github.com/regeda/expr/ast/value"
+	"github.com/regeda/expr/ast/stack"
 )
 
 %%{

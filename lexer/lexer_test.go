@@ -3,8 +3,8 @@ package lexer_test
 import (
 	"testing"
 
-	"github.com/regeda/expr/internal/ast"
-	"github.com/regeda/expr/internal/lexer"
+	"github.com/regeda/expr/ast"
+	"github.com/regeda/expr/lexer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

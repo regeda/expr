@@ -1,6 +1,7 @@
 package memory_test
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/regeda/expr/memory"
@@ -49,4 +50,34 @@ func TestAddr_EqualType(t *testing.T) {
 func TestAddr_EqualBytes(t *testing.T) {
 	assert.True(t, memory.True.EqualBytes(memory.True))
 	assert.False(t, memory.True.EqualBytes(memory.False))
+}
+
+func TestAddr_Print(t *testing.T) {
+	mem := memory.New()
+
+	cases := []struct {
+		name     string
+		v        interface{}
+		expected string
+	}{
+		{"string", "hello world", `bytes="hello world"`},
+		{"quoted string", `hi "dude"`, `bytes="hi \"dude\""`},
+		{"bool true", true, "bool=1"},
+		{"bool false", false, "bool=0"},
+		{"int", 123, "int64=123"},
+		{"vector", []interface{}{1, true, "foo"}, `vector=[int64=1, bool=1, bytes="foo"]`},
+		{"vector of vector", []interface{}{[]interface{}{true}, 1}, `vector=[vector=[bool=1], int64=1]`},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			buf := bytes.NewBuffer(nil)
+			addr, err := mem.Alloc(c.v)
+			require.NoError(t, err)
+
+			addr.Print(buf)
+
+			assert.Equal(t, c.expected, buf.String())
+		})
+	}
 }
