@@ -6,17 +6,16 @@ import (
 	"github.com/regeda/expr/memory"
 )
 
-func init() {
-	Register("concat", delegate.DelegatorFunc(concat).Assert(
+var Strings = delegate.Module{
+	"concat": delegate.DelegatorFunc(concat).Assert(
 		assert.TypeBytes,
-	))
-
-	Register("join", delegate.DelegatorFunc(join).Assert(assert.Every(
+	),
+	"join": delegate.DelegatorFunc(join).Assert(assert.Every(
 		assert.Len(2),
 		assert.TypeAt(0, memory.TypeBytes),
 		assert.TypeAt(1, memory.TypeVector),
 		assert.VectorAt(1, assert.TypeBytes),
-	)))
+	)),
 }
 
 func concat(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {

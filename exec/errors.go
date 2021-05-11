@@ -7,7 +7,6 @@ var (
 	errNoFrames           = errors.New("no frames to execute")
 	errUnexpectedEOP      = errors.New("unexpected end of program")
 	errOpRet              = errors.New("operation return")
-	errStackOverflow      = errors.New("stack overflow")
 	errEmptyDelegatorName = errors.New("empty delegator name")
 	errUnexpectedEOF      = errors.New("unexpected end of frames")
 	errNoOperation        = errors.New("no operation in frame")

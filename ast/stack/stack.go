@@ -1,7 +1,7 @@
 package stack
 
 import (
-	"github.com/regeda/expr/internal/ast"
+	"github.com/regeda/expr/ast"
 )
 
 type Stack []*ast.Node

@@ -1,11 +1,13 @@
 package exec_test
 
 import (
+	"bytes"
 	"testing"
 
+	"github.com/regeda/expr/ast/value"
+	"github.com/regeda/expr/compiler"
+	"github.com/regeda/expr/delegate"
 	"github.com/regeda/expr/exec"
-	"github.com/regeda/expr/internal/ast/value"
-	"github.com/regeda/expr/internal/compiler"
 	"github.com/regeda/expr/memory"
 	"github.com/regeda/expr/stdlib"
 	"github.com/stretchr/testify/assert"
@@ -13,11 +15,18 @@ import (
 )
 
 func TestVM_Exec(t *testing.T) {
+	tracing := bytes.NewBuffer(nil)
+
+	registry := delegate.NewRegistry(delegate.RegistryWithTracing(tracing))
+	registry.Import(stdlib.Compare, stdlib.Strings)
+
 	comp := compiler.New()
-	exec := exec.New(stdlib.Registry())
+	exec := exec.New(exec.WithRegistry(registry))
 
 	t.Run("const boolean", func(t *testing.T) {
 		for _, bb := range [...]bool{true, false} {
+			tracing.Reset()
+
 			bcode := comp.Compile(value.Nest(
 				value.Exit(),
 				value.Bool(bb),
@@ -29,10 +38,14 @@ func TestVM_Exec(t *testing.T) {
 
 			require.Equal(t, memory.TypeBool, addr.Type())
 			assert.Equal(t, bb, addr.Bool())
+
+			assert.Empty(t, tracing.String())
 		}
 	})
 
 	t.Run("const int", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Int(1),
@@ -44,9 +57,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeInt64, addr.Type())
 		assert.Equal(t, int64(1), addr.Int64())
+
+		assert.Empty(t, tracing.String())
 	})
 
 	t.Run("const array", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -71,9 +88,13 @@ func TestVM_Exec(t *testing.T) {
 			require.Equal(t, memory.TypeInt64, addrAt.Type())
 			assert.Equal(t, n, addrAt.Int64())
 		}
+
+		assert.Empty(t, tracing.String())
 	})
 
 	t.Run("array of array", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -107,9 +128,13 @@ func TestVM_Exec(t *testing.T) {
 		require.NotNil(t, strAtPos1)
 		require.Equal(t, memory.TypeBytes, strAtPos1.Type())
 		assert.Equal(t, []byte("foo"), strAtPos1.Bytes())
+
+		assert.Empty(t, tracing.String())
 	})
 
 	t.Run("func join", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -129,9 +154,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBytes, addr.Type())
 		assert.Equal(t, []byte("a$b$c"), addr.Bytes())
+
+		assert.Equal(t, "join(bytes=\"$\", vector=[bytes=\"a\", bytes=\"b\", bytes=\"c\"]) -> bytes=\"a$b$c\"\n", tracing.String())
 	})
 
 	t.Run("func concat", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -147,9 +176,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBytes, addr.Type())
 		assert.Equal(t, []byte("foobarbaz"), addr.Bytes())
+
+		assert.Equal(t, "concat(bytes=\"foo\", bytes=\"bar\", bytes=\"baz\") -> bytes=\"foobarbaz\"\n", tracing.String())
 	})
 
 	t.Run("func equals int", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -164,9 +197,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBool, addr.Type())
 		assert.True(t, addr.Bool())
+
+		assert.Equal(t, "equals(int64=1, int64=1) -> bool=1\n", tracing.String())
 	})
 
 	t.Run("func equals str", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -181,9 +218,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBool, addr.Type())
 		assert.True(t, addr.Bool())
+
+		assert.Equal(t, "equals(bytes=\"foo\", bytes=\"foo\") -> bool=1\n", tracing.String())
 	})
 
 	t.Run("func equals vector", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -207,9 +248,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBool, addr.Type())
 		assert.True(t, addr.Bool())
+
+		assert.Equal(t, "equals(vector=[bytes=\"foo\", bytes=\"bar\"], vector=[bytes=\"foo\", bytes=\"bar\"]) -> bool=1\n", tracing.String())
 	})
 
 	t.Run("func equals concat", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -229,9 +274,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBool, addr.Type())
 		assert.True(t, addr.Bool())
+
+		assert.Equal(t, "concat(bytes=\"foo\", bytes=\"bar\", bytes=\"baz\") -> bytes=\"foobarbaz\"\nequals(bytes=\"foobarbaz\", bytes=\"foobarbaz\") -> bool=1\n", tracing.String())
 	})
 
 	t.Run("func contains", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -251,9 +300,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBool, addr.Type())
 		assert.True(t, addr.Bool())
+
+		assert.Equal(t, "contains(vector=[bytes=\"a\", bytes=\"b\", bytes=\"c\"], bytes=\"a\") -> bool=1\n", tracing.String())
 	})
 
 	t.Run("func intersects", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Nest(
@@ -275,9 +328,13 @@ func TestVM_Exec(t *testing.T) {
 
 		require.Equal(t, memory.TypeBool, addr.Type())
 		assert.True(t, addr.Bool())
+
+		assert.Equal(t, "intersects(vector=[int64=1, int64=2], vector=[int64=2]) -> bool=1\n", tracing.String())
 	})
 
 	t.Run("delegator not exists", func(t *testing.T) {
+		tracing.Reset()
+
 		bcode := comp.Compile(value.Nest(
 			value.Exit(),
 			value.Call("NONAME"),

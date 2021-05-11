@@ -5,19 +5,17 @@ import (
 
 	flatbuffers "github.com/google/flatbuffers/go"
 	"github.com/pkg/errors"
+	"github.com/regeda/expr/bytecode"
+	"github.com/regeda/expr/compiler"
 	"github.com/regeda/expr/delegate"
-	"github.com/regeda/expr/internal/bytecode"
-	"github.com/regeda/expr/internal/compiler"
 	"github.com/regeda/expr/memory"
 )
 
 type VM struct {
-	delegators map[string]delegate.Delegator
-
-	memory memory.Memory
-	stack  stack
-	// buffered variables
-	prog bytecode.Program
+	globals Globals
+	memory  memory.Memory
+	stack   stack
+	prog    bytecode.Program
 }
 
 type Opt func(*VM)
@@ -34,10 +32,14 @@ func WithStackSize(n uint32) Opt {
 	}
 }
 
-func New(delegators map[string]delegate.Delegator, opts ...Opt) *VM {
-	vm := &VM{
-		delegators: delegators,
+func WithRegistry(reg delegate.Registry) Opt {
+	return func(vm *VM) {
+		vm.globals.SetRegistry(reg)
 	}
+}
+
+func New(opts ...Opt) *VM {
+	vm := &VM{}
 
 	for _, opt := range opts {
 		opt(vm)
@@ -146,7 +148,7 @@ func (v *VM) execFrame(i int) (memory.Addr, error) {
 		if fn == nil {
 			return memory.Nil, errEmptyDelegatorName
 		}
-		delegator, ok := v.delegators[string(fn)]
+		delegator, ok := v.globals.delegators.Get(string(fn))
 		if !ok {
 			return memory.Nil, fmt.Errorf("delegator <%s> not exists", fn)
 		}

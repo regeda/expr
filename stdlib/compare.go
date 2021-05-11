@@ -6,8 +6,8 @@ import (
 	"github.com/regeda/expr/memory"
 )
 
-func init() {
-	Register("equals", delegate.DelegatorFunc(equals).
+var Compare = delegate.Module{
+	"equals": delegate.DelegatorFunc(equals).
 		Assert(assert.Every(
 			assert.Len(2),
 			assert.Any(
@@ -25,9 +25,8 @@ func init() {
 					)),
 				),
 			),
-		)))
-
-	Register("contains", delegate.DelegatorFunc(contains).
+		)),
+	"contains": delegate.DelegatorFunc(contains).
 		Assert(assert.Every(
 			assert.Len(2),
 			assert.TypeAt(0, memory.TypeVector),
@@ -41,9 +40,8 @@ func init() {
 					assert.TypeAt(1, memory.TypeBytes),
 				),
 			),
-		)))
-
-	Register("intersects", delegate.DelegatorFunc(intersects).
+		)),
+	"intersects": delegate.DelegatorFunc(intersects).
 		Assert(assert.Every(
 			assert.Len(2),
 			assert.TypeVector,
@@ -57,7 +55,7 @@ func init() {
 					assert.VectorAt(1, assert.Type(memory.TypeBytes)),
 				),
 			),
-		)))
+		)),
 }
 
 func equals(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
