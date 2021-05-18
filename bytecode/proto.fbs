@@ -33,7 +33,7 @@ union Op {
   OpRet
 }
 
-table Version {
+struct Version {
   minor:ubyte;
   major:ubyte;
 }

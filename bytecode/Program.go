@@ -29,7 +29,7 @@ func (rcv *Program) Table() flatbuffers.Table {
 func (rcv *Program) Ver(obj *Version) *Version {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
-		x := rcv._tab.Indirect(o + rcv._tab.Pos)
+		x := o + rcv._tab.Pos
 		if obj == nil {
 			obj = new(Version)
 		}
@@ -63,7 +63,7 @@ func ProgramStart(builder *flatbuffers.Builder) {
 	builder.StartObject(2)
 }
 func ProgramAddVer(builder *flatbuffers.Builder, ver flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(0, flatbuffers.UOffsetT(ver), 0)
+	builder.PrependStructSlot(0, flatbuffers.UOffsetT(ver), 0)
 }
 func ProgramAddFrames(builder *flatbuffers.Builder, frames flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(frames), 0)
