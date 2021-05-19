@@ -30,15 +30,12 @@ func (c *Compiler) reset() {
 }
 
 func (c *Compiler) writeVersion(major, minor byte) flatbuffers.UOffsetT {
-	bytecode.VersionStart(c.b)
-	bytecode.VersionAddMajor(c.b, major)
-	bytecode.VersionAddMinor(c.b, minor)
-	return bytecode.VersionEnd(c.b)
+	return bytecode.CreateVersion(c.b, minor, major)
 }
 
-func (c *Compiler) writeProgram(version, frames flatbuffers.UOffsetT) flatbuffers.UOffsetT {
+func (c *Compiler) writeProgram(frames flatbuffers.UOffsetT) flatbuffers.UOffsetT {
 	bytecode.ProgramStart(c.b)
-	bytecode.ProgramAddVer(c.b, version)
+	bytecode.ProgramAddVer(c.b, c.writeVersion(MajorVersion, MinorVersion))
 	bytecode.ProgramAddFrames(c.b, frames)
 	return bytecode.ProgramEnd(c.b)
 }
@@ -151,7 +148,6 @@ func (c *Compiler) Compile(node *ast.Node) []byte {
 	c.reset()
 
 	c.b.Finish(c.writeProgram(
-		c.writeVersion(MajorVersion, MinorVersion),
 		c.writeFrames(node),
 	))
 

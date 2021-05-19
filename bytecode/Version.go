@@ -7,14 +7,7 @@ import (
 )
 
 type Version struct {
-	_tab flatbuffers.Table
-}
-
-func GetRootAsVersion(buf []byte, offset flatbuffers.UOffsetT) *Version {
-	n := flatbuffers.GetUOffsetT(buf[offset:])
-	x := &Version{}
-	x.Init(buf, n+offset)
-	return x
+	_tab flatbuffers.Struct
 }
 
 func (rcv *Version) Init(buf []byte, i flatbuffers.UOffsetT) {
@@ -23,42 +16,26 @@ func (rcv *Version) Init(buf []byte, i flatbuffers.UOffsetT) {
 }
 
 func (rcv *Version) Table() flatbuffers.Table {
-	return rcv._tab
+	return rcv._tab.Table
 }
 
 func (rcv *Version) Minor() byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
-	if o != 0 {
-		return rcv._tab.GetByte(o + rcv._tab.Pos)
-	}
-	return 0
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(0))
 }
-
 func (rcv *Version) MutateMinor(n byte) bool {
-	return rcv._tab.MutateByteSlot(4, n)
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(0), n)
 }
 
 func (rcv *Version) Major() byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
-	if o != 0 {
-		return rcv._tab.GetByte(o + rcv._tab.Pos)
-	}
-	return 0
+	return rcv._tab.GetByte(rcv._tab.Pos + flatbuffers.UOffsetT(1))
 }
-
 func (rcv *Version) MutateMajor(n byte) bool {
-	return rcv._tab.MutateByteSlot(6, n)
+	return rcv._tab.MutateByte(rcv._tab.Pos+flatbuffers.UOffsetT(1), n)
 }
 
-func VersionStart(builder *flatbuffers.Builder) {
-	builder.StartObject(2)
-}
-func VersionAddMinor(builder *flatbuffers.Builder, minor byte) {
-	builder.PrependByteSlot(0, minor, 0)
-}
-func VersionAddMajor(builder *flatbuffers.Builder, major byte) {
-	builder.PrependByteSlot(1, major, 0)
-}
-func VersionEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
-	return builder.EndObject()
+func CreateVersion(builder *flatbuffers.Builder, minor byte, major byte) flatbuffers.UOffsetT {
+	builder.Prep(1, 2)
+	builder.PrependByte(major)
+	builder.PrependByte(minor)
+	return builder.Offset()
 }

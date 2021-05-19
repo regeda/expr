@@ -1,64 +1,26 @@
 package stdlib
 
 import (
-	"github.com/regeda/expr/assert"
+	"errors"
+
 	"github.com/regeda/expr/delegate"
 	"github.com/regeda/expr/memory"
 )
 
 var Compare = delegate.Module{
-	"equals": delegate.DelegatorFunc(equals).
-		Assert(assert.Every(
-			assert.Len(2),
-			assert.Any(
-				assert.TypeInt64,
-				assert.TypeBytes,
-				assert.Every(
-					assert.TypeVector,
-					assert.VectorAt(0, assert.Any(
-						assert.TypeInt64,
-						assert.TypeBytes,
-					)),
-					assert.VectorAt(1, assert.Any(
-						assert.TypeInt64,
-						assert.TypeBytes,
-					)),
-				),
-			),
-		)),
-	"contains": delegate.DelegatorFunc(contains).
-		Assert(assert.Every(
-			assert.Len(2),
-			assert.TypeAt(0, memory.TypeVector),
-			assert.Any(
-				assert.Every(
-					assert.VectorAt(0, assert.TypeInt64),
-					assert.TypeAt(1, memory.TypeInt64),
-				),
-				assert.Every(
-					assert.VectorAt(0, assert.TypeBytes),
-					assert.TypeAt(1, memory.TypeBytes),
-				),
-			),
-		)),
-	"intersects": delegate.DelegatorFunc(intersects).
-		Assert(assert.Every(
-			assert.Len(2),
-			assert.TypeVector,
-			assert.Any(
-				assert.Every(
-					assert.VectorAt(0, assert.Type(memory.TypeInt64)),
-					assert.VectorAt(1, assert.Type(memory.TypeInt64)),
-				),
-				assert.Every(
-					assert.VectorAt(0, assert.Type(memory.TypeBytes)),
-					assert.VectorAt(1, assert.Type(memory.TypeBytes)),
-				),
-			),
-		)),
+	"equals":     delegate.DelegatorFunc(equals),
+	"contains":   delegate.DelegatorFunc(contains),
+	"intersects": delegate.DelegatorFunc(intersects),
 }
 
+var (
+	errEqualsExpectedTwoArgs = errors.New("equals: expected 2 args")
+)
+
 func equals(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
+	if len(argv) != 2 {
+		return memory.Nil, errEqualsExpectedTwoArgs
+	}
 	if !argv[0].EqualType(argv[1]) {
 		return memory.False, nil
 	}
@@ -79,7 +41,22 @@ func equals(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	return memory.False, nil
 }
 
+var (
+	errContainsExpectedTwoArgs   = errors.New("contains: expected 2 args")
+	errContainsExpectedArrayAt0  = errors.New("contains: expected array at 0")
+	errContainsExpectedScalarAt1 = errors.New("contains: expected scalar at 1")
+)
+
 func contains(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
+	if len(argv) != 2 {
+		return memory.Nil, errContainsExpectedTwoArgs
+	}
+	if !argv[0].TypeOf(memory.TypeVector) {
+		return memory.Nil, errContainsExpectedArrayAt0
+	}
+	if argv[1].TypeOf(memory.TypeVector) {
+		return memory.Nil, errContainsExpectedScalarAt1
+	}
 	for _, p := range argv[0].Vector() {
 		if p.EqualBytes(argv[1]) {
 			return memory.True, nil
@@ -88,7 +65,18 @@ func contains(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	return memory.False, nil
 }
 
+var (
+	errIntersectsExpectedTwoArgs = errors.New("intersects: expected 2 args")
+	errIntersectsExpectedArrays  = errors.New("intersects: expected arrays")
+)
+
 func intersects(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
+	if len(argv) != 2 {
+		return memory.Nil, errIntersectsExpectedTwoArgs
+	}
+	if !argv[0].EqualType(argv[1]) || !argv[0].TypeOf(memory.TypeVector) {
+		return memory.Nil, errIntersectsExpectedArrays
+	}
 	for _, a := range argv[0].Vector() {
 		for _, b := range argv[1].Vector() {
 			if a.EqualBytes(b) {
