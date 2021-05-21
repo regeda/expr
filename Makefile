@@ -1,4 +1,4 @@
-.PHONY: gen-proto gen-fbs gen-lexer test bench bench-report
+.PHONY: gen-proto gen-fbs gen-lexer test bench bench-report escape-analysis
 
 default: test
 
@@ -22,3 +22,5 @@ bench: test
 
 bench-report: bench
 	@go tool pprof -web cpu.out
+
+escape-analysis: ; @go test -gcflags="-m" ./...

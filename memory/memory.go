@@ -45,14 +45,7 @@ func (b *Memory) Reset() {
 
 func (b *Memory) alloc(t Type, size uint32) Addr {
 	buf := b.h.alloc(size)
-	return b.allocAddr(t, buf)
-}
-
-func (b *Memory) allocAddr(t Type, dat []byte) Addr {
-	return b.g.add(Addr{
-		typ: t,
-		dat: dat,
-	})
+	return NewAddr(t, buf...)
 }
 
 func (b *Memory) Alloc(in interface{}) (Addr, error) {
@@ -86,7 +79,7 @@ func (b *Memory) Alloc(in interface{}) (Addr, error) {
 }
 
 func (b *Memory) AllocBytesAddr(dat []byte) Addr {
-	return b.allocAddr(TypeBytes, dat)
+	return NewAddr(TypeBytes, dat...)
 }
 
 func (b *Memory) AllocBytes(size uint32) Addr {
@@ -103,7 +96,7 @@ func (b *Memory) AllocInt64(v int64) Addr {
 }
 
 func (b *Memory) AllocVector(size uint32) Addr {
-	addr := b.allocAddr(TypeVector, nil)
+	addr := NewAddr(TypeVector)
 	addr.vec = b.g.alloc(size)
 	return addr
 }
