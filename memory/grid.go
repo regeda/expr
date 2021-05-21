@@ -25,10 +25,3 @@ func (g *grid) alloc(n uint32) []Addr {
 func (g *grid) reset() {
 	g.off = 0
 }
-
-func (g *grid) add(a Addr) Addr {
-	g.grow(1)
-	g.buf[g.off] = a
-	g.off++
-	return a
-}
