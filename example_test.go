@@ -12,7 +12,7 @@ import (
 func ExampleExpr() {
 	code := `join(",", ["a", "b"])`
 
-	a := asm.New()
+	var a asm.ASM
 	bytecode, err := a.Assemble([]byte(code))
 	if err != nil {
 		panic(err)

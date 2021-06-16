@@ -3,7 +3,7 @@ package expr_test
 import (
 	"testing"
 
-	"github.com/regeda/expr/ast/value"
+	"github.com/regeda/expr/ast"
 	"github.com/regeda/expr/compiler"
 	"github.com/regeda/expr/delegate"
 	"github.com/regeda/expr/exec"
@@ -12,7 +12,7 @@ import (
 )
 
 func BenchmarkExec(b *testing.B) {
-	comp := compiler.New()
+	var comp compiler.Compiler
 
 	vm := exec.New(
 		exec.WithRegistry(delegate.Import(stdlib.Compare, stdlib.Strings)),
@@ -25,23 +25,21 @@ func BenchmarkExec(b *testing.B) {
 		),
 	)
 
-	bcode := comp.Compile(value.Nest(
-		value.Exit(),
-		value.Nest(
-			value.Call("equals"),
-			value.Str("foo,bar,baz"),
-			value.Nest(
-				value.Call("join"),
-				value.Str(","),
-				value.Nest(
-					value.Arr(),
-					value.Str("foo"),
-					value.Str("bar"),
-					value.Str("baz"),
+	bcode := comp.Compile(
+		ast.Exit().Nest(
+			ast.Call("equals").Nest(
+				ast.Str("foo,bar,baz"),
+				ast.Call("join").Nest(
+					ast.Str(","),
+					ast.Arr().Nest(
+						ast.Str("foo"),
+						ast.Str("bar"),
+						ast.Str("baz"),
+					),
 				),
 			),
 		),
-	))
+	)
 
 	b.ResetTimer()
 

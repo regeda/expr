@@ -1,4 +1,4 @@
-.PHONY: gen-proto gen-fbs gen-lexer test bench bench-report escape-analysis
+.PHONY: gen-proto gen-fbs gen-tokenz test bench bench-report escape-analysis
 
 default: test
 
@@ -10,11 +10,11 @@ gen-fbs:
 	@rm -f bytecode/*.go
 	@flatc -g -o . bytecode/proto.fbs
 
-gen-lexer: gen-proto
-	@ragel -Z -G2 lexer/lexer.go.rl -o lexer/lexer.go
-	@goimports -w lexer/lexer.go
+gen-tokenz: gen-proto
+	@ragel -Z -G2 tokenz/tokenz.go.rl -o tokenz/tokenz.go
+	@goimports -w tokenz/tokenz.go
 
-test: gen-fbs gen-lexer
+test: gen-fbs gen-tokenz
 	@go test -v -cover ./...
 
 bench: test
