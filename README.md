@@ -1,4 +1,5 @@
 # Expr – a tiny stack-based virtual machine written in Go
+
 [![Build Status](https://travis-ci.com/regeda/expr.svg?branch=main)](https://travis-ci.com/regeda/expr)
 [![codecov](https://codecov.io/gh/regeda/expr/branch/main/graph/badge.svg?token=99QXNC2IAO)](https://codecov.io/gh/regeda/expr)
 [![Go Reference](https://pkg.go.dev/badge/gihub.com/regeda/expr.svg)](https://pkg.go.dev/github.com/regeda/expr)
@@ -90,16 +91,34 @@ contains([1, 2, 3], 4) // false
 ```
 
 ## Architecture
-The architecture consists of 3 components:
-1. Lexer
-2. Compiler
-3. Virtual Machine
 
-**The lexer** generates a syntax tree parsing the input text:
+The architecture consists of 4 components:
+1. Tokenizer
+2. Syntax Tree Builder
+3. Compiler
+4. Virtual Machine
+
+**The Tokenizer** parses the input text:
 ```
 join(",", ["a", "b"])
 ```
-The resulted syntax tree:
+and returns the following tokens:
+```
+IDENT join
+PUNCT (
+STR ","
+PUNCT ,
+PUNCT [
+STR "a"
+PUNCT ,
+STR "b"
+PUNCT ]
+PUNCT )
+```
+
+> The tokenizer is implemented using [Ragel State Machine Compiler](https://www.colm.net/open-source/ragel/).
+
+**The Syntax Tree Builder** generates a syntax tree from tokens:
 ```
 EXIT
 |-- CALL(join)
@@ -109,9 +128,9 @@ EXIT
        |-- STR("b")
 ```
 
-> The lexer is implemented using [Ragel State Machine Compiler](https://www.colm.net/open-source/ragel/). The syntax tree is described by [Protocol Buffers 3](https://developers.google.com/protocol-buffers/) to make it easy traversable by any programming language.
+> A schema of the syntax tree is described by [Protocol Buffers 3](https://developers.google.com/protocol-buffers/) to make it easy traversable by any programming language.
 
-**The compiler** makes a bytecode from the syntax tree to make it executable by **a stack-based virtual machine**:
+**The Compiler** makes a bytecode from the syntax tree to make it executable by **a stack-based virtual machine**:
 ```
 PUSH_STR ","
 PUSH_STR "a"
@@ -159,7 +178,7 @@ if err != nil {
 }
 // `addr` contains the result, see github.com/regeda/expr/memory.Addr
 ```
-> `Exec` is **not designed** to be run in concurrent environment. However, you can define a pool of executors to consume them in the safe mode.
+> `Exec` is **not designed** to be run in the concurrent environment. However, you can define a pool of executors to consume them in the safe mode.
 
 ## Benchmark
 

@@ -4,12 +4,13 @@ package ast;
 
 message Node {
   enum Token {
-    EXIT = 0;
-    CALL = 1;
-    STR  = 2;
-    INT  = 3;
-    BOOL = 4;
-    ARR  = 5;
+    EXIT  = 0;
+    CALL  = 1;
+    STR   = 2;
+    INT   = 3;
+    BOOL  = 4;
+    ARR   = 5;
+    IDENT = 6;
   }
 
   Token token = 1;

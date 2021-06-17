@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/regeda/expr/ast/value"
+	"github.com/regeda/expr/ast"
 	"github.com/regeda/expr/compiler"
 	"github.com/regeda/expr/delegate"
 	"github.com/regeda/expr/exec"
@@ -20,17 +20,18 @@ func TestVM_Exec(t *testing.T) {
 	registry := delegate.NewRegistry(delegate.RegistryWithTracing(tracing))
 	registry.Import(stdlib.Compare, stdlib.Strings)
 
-	comp := compiler.New()
+	var comp compiler.Compiler
+
 	exec := exec.New(exec.WithRegistry(registry))
 
 	t.Run("const boolean", func(t *testing.T) {
 		for _, bb := range [...]bool{true, false} {
 			tracing.Reset()
 
-			bcode := comp.Compile(value.Nest(
-				value.Exit(),
-				value.Bool(bb),
-			))
+			bcode := comp.Compile(
+				ast.Exit().Nest(
+					ast.Bool(bb),
+				))
 
 			addr, err := exec.Exec(bcode)
 			require.NoError(t, err)
@@ -46,10 +47,10 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("const int", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Int(1),
-		))
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Int(1),
+			))
 
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
@@ -64,15 +65,14 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("const array", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Arr(),
-				value.Int(1),
-				value.Int(2),
-				value.Int(3),
-			),
-		))
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Arr().Nest(
+					ast.Int(1),
+					ast.Int(2),
+					ast.Int(3),
+				),
+			))
 
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
@@ -95,17 +95,15 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("array of array", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Arr(),
-				value.Nest(
-					value.Arr(),
-					value.Int(0xff),
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Arr().Nest(
+					ast.Arr().Nest(
+						ast.Int(0xff),
+					),
+					ast.Str("foo"),
 				),
-				value.Str("foo"),
-			),
-		))
+			))
 
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
@@ -135,19 +133,17 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func join", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("join"),
-				value.Str("$"),
-				value.Nest(
-					value.Arr(),
-					value.Str("a"),
-					value.Str("b"),
-					value.Str("c"),
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("join").Nest(
+					ast.Str("$"),
+					ast.Arr().Nest(
+						ast.Str("a"),
+						ast.Str("b"),
+						ast.Str("c"),
+					),
 				),
-			),
-		))
+			))
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
 		require.NotNil(t, addr)
@@ -161,15 +157,14 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func concat", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("concat"),
-				value.Str("foo"),
-				value.Str("bar"),
-				value.Str("baz"),
-			),
-		))
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("concat").Nest(
+					ast.Str("foo"),
+					ast.Str("bar"),
+					ast.Str("baz"),
+				),
+			))
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
 		require.NotNil(t, addr)
@@ -183,14 +178,13 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func equals int", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("equals"),
-				value.Int(1),
-				value.Int(1),
-			),
-		))
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("equals").Nest(
+					ast.Int(1),
+					ast.Int(1),
+				),
+			))
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
 		require.NotNil(t, addr)
@@ -204,14 +198,13 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func equals str", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("equals"),
-				value.Str("foo"),
-				value.Str("foo"),
-			),
-		))
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("equals").Nest(
+					ast.Str("foo"),
+					ast.Str("foo"),
+				),
+			))
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
 		require.NotNil(t, addr)
@@ -225,22 +218,19 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func equals vector", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("equals"),
-				value.Nest(
-					value.Arr(),
-					value.Str("foo"),
-					value.Str("bar"),
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("equals").Nest(
+					ast.Arr().Nest(
+						ast.Str("foo"),
+						ast.Str("bar"),
+					),
+					ast.Arr().Nest(
+						ast.Str("foo"),
+						ast.Str("bar"),
+					),
 				),
-				value.Nest(
-					value.Arr(),
-					value.Str("foo"),
-					value.Str("bar"),
-				),
-			),
-		))
+			))
 
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
@@ -255,19 +245,17 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func equals concat", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("equals"),
-				value.Str("foobarbaz"),
-				value.Nest(
-					value.Call("concat"),
-					value.Str("foo"),
-					value.Str("bar"),
-					value.Str("baz"),
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("equals").Nest(
+					ast.Str("foobarbaz"),
+					ast.Call("concat").Nest(
+						ast.Str("foo"),
+						ast.Str("bar"),
+						ast.Str("baz"),
+					),
 				),
-			),
-		))
+			))
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
 		require.NotNil(t, addr)
@@ -281,19 +269,17 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func contains", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("contains"),
-				value.Nest(
-					value.Arr(),
-					value.Str("a"),
-					value.Str("b"),
-					value.Str("c"),
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("contains").Nest(
+					ast.Arr().Nest(
+						ast.Str("a"),
+						ast.Str("b"),
+						ast.Str("c"),
+					),
+					ast.Str("a"),
 				),
-				value.Str("a"),
-			),
-		))
+			))
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
 		require.NotNil(t, addr)
@@ -307,21 +293,18 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("func intersects", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Nest(
-				value.Call("intersects"),
-				value.Nest(
-					value.Arr(),
-					value.Int(1),
-					value.Int(2),
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("intersects").Nest(
+					ast.Arr().Nest(
+						ast.Int(1),
+						ast.Int(2),
+					),
+					ast.Arr().Nest(
+						ast.Int(2),
+					),
 				),
-				value.Nest(
-					value.Arr(),
-					value.Int(2),
-				),
-			),
-		))
+			))
 		addr, err := exec.Exec(bcode)
 		require.NoError(t, err)
 		require.NotNil(t, addr)
@@ -335,10 +318,10 @@ func TestVM_Exec(t *testing.T) {
 	t.Run("delegator not exists", func(t *testing.T) {
 		tracing.Reset()
 
-		bcode := comp.Compile(value.Nest(
-			value.Exit(),
-			value.Call("NONAME"),
-		))
+		bcode := comp.Compile(
+			ast.Exit().Nest(
+				ast.Call("NONAME"),
+			))
 
 		addr, err := exec.Exec(bcode)
 		require.EqualError(t, err, "failed to exec frame at 0: delegator <noname> not exists")

@@ -14,14 +14,8 @@ const (
 )
 
 type Compiler struct {
-	b      *flatbuffers.Builder
+	b      flatbuffers.Builder
 	frames []flatbuffers.UOffsetT
-}
-
-func New() *Compiler {
-	return &Compiler{
-		b: flatbuffers.NewBuilder(1024),
-	}
 }
 
 func (c *Compiler) reset() {
@@ -30,61 +24,61 @@ func (c *Compiler) reset() {
 }
 
 func (c *Compiler) writeVersion(major, minor byte) flatbuffers.UOffsetT {
-	return bytecode.CreateVersion(c.b, minor, major)
+	return bytecode.CreateVersion(&c.b, minor, major)
 }
 
 func (c *Compiler) writeProgram(frames flatbuffers.UOffsetT) flatbuffers.UOffsetT {
-	bytecode.ProgramStart(c.b)
-	bytecode.ProgramAddVer(c.b, c.writeVersion(MajorVersion, MinorVersion))
-	bytecode.ProgramAddFrames(c.b, frames)
-	return bytecode.ProgramEnd(c.b)
+	bytecode.ProgramStart(&c.b)
+	bytecode.ProgramAddVer(&c.b, c.writeVersion(MajorVersion, MinorVersion))
+	bytecode.ProgramAddFrames(&c.b, frames)
+	return bytecode.ProgramEnd(&c.b)
 }
 
 func (c *Compiler) writeOpPushInt(v int64) flatbuffers.UOffsetT {
-	bytecode.OpPushIntStart(c.b)
-	bytecode.OpPushIntAddVal(c.b, v)
-	return bytecode.OpPushIntEnd(c.b)
+	bytecode.OpPushIntStart(&c.b)
+	bytecode.OpPushIntAddVal(&c.b, v)
+	return bytecode.OpPushIntEnd(&c.b)
 }
 
 func (c *Compiler) writeOpPushBool(v bool) flatbuffers.UOffsetT {
-	bytecode.OpPushBoolStart(c.b)
-	bytecode.OpPushBoolAddVal(c.b, v)
-	return bytecode.OpPushBoolEnd(c.b)
+	bytecode.OpPushBoolStart(&c.b)
+	bytecode.OpPushBoolAddVal(&c.b, v)
+	return bytecode.OpPushBoolEnd(&c.b)
 }
 
 func (c *Compiler) writeOpPushStr(v string) flatbuffers.UOffsetT {
 	offset := c.b.CreateSharedString(v)
 
-	bytecode.OpPushStrStart(c.b)
-	bytecode.OpPushStrAddVal(c.b, offset)
-	return bytecode.OpPushStrEnd(c.b)
+	bytecode.OpPushStrStart(&c.b)
+	bytecode.OpPushStrAddVal(&c.b, offset)
+	return bytecode.OpPushStrEnd(&c.b)
 }
 
 func (c *Compiler) writeOpPushVector(elems int) flatbuffers.UOffsetT {
-	bytecode.OpPushVectorStart(c.b)
-	bytecode.OpPushVectorAddElems(c.b, uint16(elems))
-	return bytecode.OpPushVectorEnd(c.b)
+	bytecode.OpPushVectorStart(&c.b)
+	bytecode.OpPushVectorAddElems(&c.b, uint16(elems))
+	return bytecode.OpPushVectorEnd(&c.b)
 }
 
 func (c *Compiler) writeOpRet() flatbuffers.UOffsetT {
-	bytecode.OpRetStart(c.b)
-	return bytecode.OpRetEnd(c.b)
+	bytecode.OpRetStart(&c.b)
+	return bytecode.OpRetEnd(&c.b)
 }
 
 func (c *Compiler) writeOpSysCall(fn string, args int) flatbuffers.UOffsetT {
 	fnOffset := c.b.CreateSharedString(fn)
 
-	bytecode.OpSysCallStart(c.b)
-	bytecode.OpSysCallAddArgs(c.b, uint16(args))
-	bytecode.OpSysCallAddName(c.b, fnOffset)
-	return bytecode.OpSysCallEnd(c.b)
+	bytecode.OpSysCallStart(&c.b)
+	bytecode.OpSysCallAddArgs(&c.b, uint16(args))
+	bytecode.OpSysCallAddName(&c.b, fnOffset)
+	return bytecode.OpSysCallEnd(&c.b)
 }
 
 func (c *Compiler) writeFrames(node *ast.Node) flatbuffers.UOffsetT {
 	c.discoverFrames(node)
 
 	num := len(c.frames)
-	bytecode.ProgramStartFramesVector(c.b, num)
+	bytecode.ProgramStartFramesVector(&c.b, num)
 	for i := num - 1; i >= 0; i-- {
 		c.b.PrependUOffsetT(c.frames[i])
 	}
@@ -92,10 +86,10 @@ func (c *Compiler) writeFrames(node *ast.Node) flatbuffers.UOffsetT {
 }
 
 func (c *Compiler) writeFrame(offset flatbuffers.UOffsetT, op bytecode.Op) flatbuffers.UOffsetT {
-	bytecode.FrameStart(c.b)
-	bytecode.FrameAddOpType(c.b, op)
-	bytecode.FrameAddOp(c.b, offset)
-	return bytecode.FrameEnd(c.b)
+	bytecode.FrameStart(&c.b)
+	bytecode.FrameAddOpType(&c.b, op)
+	bytecode.FrameAddOp(&c.b, offset)
+	return bytecode.FrameEnd(&c.b)
 }
 
 func (c *Compiler) pushFrame(f flatbuffers.UOffsetT) {
