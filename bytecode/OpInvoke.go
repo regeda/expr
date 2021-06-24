@@ -6,27 +6,27 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
-type OpSysCall struct {
+type OpInvoke struct {
 	_tab flatbuffers.Table
 }
 
-func GetRootAsOpSysCall(buf []byte, offset flatbuffers.UOffsetT) *OpSysCall {
+func GetRootAsOpInvoke(buf []byte, offset flatbuffers.UOffsetT) *OpInvoke {
 	n := flatbuffers.GetUOffsetT(buf[offset:])
-	x := &OpSysCall{}
+	x := &OpInvoke{}
 	x.Init(buf, n+offset)
 	return x
 }
 
-func (rcv *OpSysCall) Init(buf []byte, i flatbuffers.UOffsetT) {
+func (rcv *OpInvoke) Init(buf []byte, i flatbuffers.UOffsetT) {
 	rcv._tab.Bytes = buf
 	rcv._tab.Pos = i
 }
 
-func (rcv *OpSysCall) Table() flatbuffers.Table {
+func (rcv *OpInvoke) Table() flatbuffers.Table {
 	return rcv._tab
 }
 
-func (rcv *OpSysCall) Args() uint16 {
+func (rcv *OpInvoke) Args() uint16 {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
 	if o != 0 {
 		return rcv._tab.GetUint16(o + rcv._tab.Pos)
@@ -34,11 +34,11 @@ func (rcv *OpSysCall) Args() uint16 {
 	return 0
 }
 
-func (rcv *OpSysCall) MutateArgs(n uint16) bool {
+func (rcv *OpInvoke) MutateArgs(n uint16) bool {
 	return rcv._tab.MutateUint16Slot(4, n)
 }
 
-func (rcv *OpSysCall) Name() []byte {
+func (rcv *OpInvoke) Name() []byte {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
@@ -46,15 +46,15 @@ func (rcv *OpSysCall) Name() []byte {
 	return nil
 }
 
-func OpSysCallStart(builder *flatbuffers.Builder) {
+func OpInvokeStart(builder *flatbuffers.Builder) {
 	builder.StartObject(2)
 }
-func OpSysCallAddArgs(builder *flatbuffers.Builder, args uint16) {
+func OpInvokeAddArgs(builder *flatbuffers.Builder, args uint16) {
 	builder.PrependUint16Slot(0, args, 0)
 }
-func OpSysCallAddName(builder *flatbuffers.Builder, name flatbuffers.UOffsetT) {
+func OpInvokeAddName(builder *flatbuffers.Builder, name flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(1, flatbuffers.UOffsetT(name), 0)
 }
-func OpSysCallEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
+func OpInvokeEnd(builder *flatbuffers.Builder) flatbuffers.UOffsetT {
 	return builder.EndObject()
 }

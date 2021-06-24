@@ -4,18 +4,34 @@ import (
 	"fmt"
 
 	flatbuffers "github.com/google/flatbuffers/go"
-	"github.com/regeda/expr/ast"
 	"github.com/regeda/expr/bytecode"
+	"github.com/regeda/expr/lexer"
 )
 
 const (
-	MinorVersion byte = 1
+	MinorVersion byte = 2
 	MajorVersion byte = 0
 )
+
+var Default = Compiler{}
+
+func Compile(nodes []lexer.Node) []byte {
+	return Default.Compile(nodes)
+}
 
 type Compiler struct {
 	b      flatbuffers.Builder
 	frames []flatbuffers.UOffsetT
+}
+
+func (c *Compiler) Compile(nodes []lexer.Node) []byte {
+	c.reset()
+
+	c.b.Finish(c.writeProgram(
+		c.writeFrames(nodes),
+	))
+
+	return c.b.FinishedBytes()
 }
 
 func (c *Compiler) reset() {
@@ -40,10 +56,34 @@ func (c *Compiler) writeOpPushInt(v int64) flatbuffers.UOffsetT {
 	return bytecode.OpPushIntEnd(&c.b)
 }
 
-func (c *Compiler) writeOpPushBool(v bool) flatbuffers.UOffsetT {
-	bytecode.OpPushBoolStart(&c.b)
-	bytecode.OpPushBoolAddVal(&c.b, v)
-	return bytecode.OpPushBoolEnd(&c.b)
+func (c *Compiler) writeOpPushTrue() flatbuffers.UOffsetT {
+	bytecode.OpPushTrueStart(&c.b)
+	return bytecode.OpPushTrueEnd(&c.b)
+}
+
+func (c *Compiler) writeOpPushFalse() flatbuffers.UOffsetT {
+	bytecode.OpPushFalseStart(&c.b)
+	return bytecode.OpPushFalseEnd(&c.b)
+}
+
+func (c *Compiler) writeOpAdd() flatbuffers.UOffsetT {
+	bytecode.OpAddStart(&c.b)
+	return bytecode.OpAddEnd(&c.b)
+}
+
+func (c *Compiler) writeOpSub() flatbuffers.UOffsetT {
+	bytecode.OpSubStart(&c.b)
+	return bytecode.OpSubEnd(&c.b)
+}
+
+func (c *Compiler) writeOpMul() flatbuffers.UOffsetT {
+	bytecode.OpMulStart(&c.b)
+	return bytecode.OpMulEnd(&c.b)
+}
+
+func (c *Compiler) writeOpDiv() flatbuffers.UOffsetT {
+	bytecode.OpDivStart(&c.b)
+	return bytecode.OpDivEnd(&c.b)
 }
 
 func (c *Compiler) writeOpPushStr(v string) flatbuffers.UOffsetT {
@@ -54,28 +94,23 @@ func (c *Compiler) writeOpPushStr(v string) flatbuffers.UOffsetT {
 	return bytecode.OpPushStrEnd(&c.b)
 }
 
-func (c *Compiler) writeOpPushVector(elems int) flatbuffers.UOffsetT {
+func (c *Compiler) writeOpPushVector(elems uint) flatbuffers.UOffsetT {
 	bytecode.OpPushVectorStart(&c.b)
 	bytecode.OpPushVectorAddElems(&c.b, uint16(elems))
 	return bytecode.OpPushVectorEnd(&c.b)
 }
 
-func (c *Compiler) writeOpRet() flatbuffers.UOffsetT {
-	bytecode.OpRetStart(&c.b)
-	return bytecode.OpRetEnd(&c.b)
-}
-
-func (c *Compiler) writeOpSysCall(fn string, args int) flatbuffers.UOffsetT {
+func (c *Compiler) writeOpInvoke(fn string, args uint) flatbuffers.UOffsetT {
 	fnOffset := c.b.CreateSharedString(fn)
 
-	bytecode.OpSysCallStart(&c.b)
-	bytecode.OpSysCallAddArgs(&c.b, uint16(args))
-	bytecode.OpSysCallAddName(&c.b, fnOffset)
-	return bytecode.OpSysCallEnd(&c.b)
+	bytecode.OpInvokeStart(&c.b)
+	bytecode.OpInvokeAddArgs(&c.b, uint16(args))
+	bytecode.OpInvokeAddName(&c.b, fnOffset)
+	return bytecode.OpInvokeEnd(&c.b)
 }
 
-func (c *Compiler) writeFrames(node *ast.Node) flatbuffers.UOffsetT {
-	c.discoverFrames(node)
+func (c *Compiler) writeFrames(nodes []lexer.Node) flatbuffers.UOffsetT {
+	c.discoverFrames(nodes)
 
 	num := len(c.frames)
 	bytecode.ProgramStartFramesVector(&c.b, num)
@@ -96,54 +131,61 @@ func (c *Compiler) pushFrame(f flatbuffers.UOffsetT) {
 	c.frames = append(c.frames, f)
 }
 
-func (c *Compiler) discoverFrames(nodes ...*ast.Node) {
+func (c *Compiler) discoverFrames(nodes []lexer.Node) {
 	for _, node := range nodes {
-		switch node.Token {
-		case ast.Node_EXIT:
-			c.discoverFrames(node.Nested...)
+		switch node.Typ {
+		case lexer.TypInvoke:
 			c.pushFrame(c.writeFrame(
-				c.writeOpRet(),
-				bytecode.OpOpRet,
+				c.writeOpInvoke(node.DatS, node.Cap),
+				bytecode.OpOpInvoke,
 			))
-		case ast.Node_CALL:
-			c.discoverFrames(node.Nested...)
+		case lexer.TypStr:
 			c.pushFrame(c.writeFrame(
-				c.writeOpSysCall(node.GetS(), len(node.Nested)),
-				bytecode.OpOpSysCall,
-			))
-		case ast.Node_STR:
-			c.pushFrame(c.writeFrame(
-				c.writeOpPushStr(node.GetS()),
+				c.writeOpPushStr(node.DatS),
 				bytecode.OpOpPushStr,
 			))
-		case ast.Node_INT:
+		case lexer.TypInt:
 			c.pushFrame(c.writeFrame(
-				c.writeOpPushInt(node.GetI()),
+				c.writeOpPushInt(node.DatN),
 				bytecode.OpOpPushInt,
 			))
-		case ast.Node_BOOL:
+		case lexer.TypTrue:
 			c.pushFrame(c.writeFrame(
-				c.writeOpPushBool(node.GetB()),
-				bytecode.OpOpPushBool,
+				c.writeOpPushTrue(),
+				bytecode.OpOpPushTrue,
 			))
-		case ast.Node_ARR:
-			c.discoverFrames(node.Nested...)
+		case lexer.TypFalse:
 			c.pushFrame(c.writeFrame(
-				c.writeOpPushVector(len(node.Nested)),
+				c.writeOpPushFalse(),
+				bytecode.OpOpPushFalse,
+			))
+		case lexer.TypVector:
+			c.pushFrame(c.writeFrame(
+				c.writeOpPushVector(node.Cap),
 				bytecode.OpOpPushVector,
 			))
+		case lexer.TypOpAdd:
+			c.pushFrame(c.writeFrame(
+				c.writeOpAdd(),
+				bytecode.OpOpAdd,
+			))
+		case lexer.TypOpSub:
+			c.pushFrame(c.writeFrame(
+				c.writeOpSub(),
+				bytecode.OpOpSub,
+			))
+		case lexer.TypOpMul:
+			c.pushFrame(c.writeFrame(
+				c.writeOpMul(),
+				bytecode.OpOpMul,
+			))
+		case lexer.TypOpDiv:
+			c.pushFrame(c.writeFrame(
+				c.writeOpDiv(),
+				bytecode.OpOpDiv,
+			))
 		default:
-			panic(fmt.Sprintf("unknown token <%s>, see ast.Node_Token", node.Token))
+			panic(fmt.Sprintf("unknown type <%d>, see lexer.Typ", node.Typ))
 		}
 	}
-}
-
-func (c *Compiler) Compile(node *ast.Node) []byte {
-	c.reset()
-
-	c.b.Finish(c.writeProgram(
-		c.writeFrames(node),
-	))
-
-	return c.b.FinishedBytes()
 }

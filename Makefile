@@ -1,20 +1,16 @@
-.PHONY: gen-proto gen-fbs gen-tokenz test bench bench-report escape-analysis
+.PHONY: gen-fbs gen-lexer test bench bench-report escape-analysis
 
 default: test
-
-gen-proto:
-	@go install github.com/gogo/protobuf/protoc-gen-gogofaster
-	@protoc --gogofaster_out=. ./ast/ast.proto
 
 gen-fbs:
 	@rm -f bytecode/*.go
 	@flatc -g -o . bytecode/proto.fbs
 
-gen-tokenz: gen-proto
-	@ragel -Z -G2 tokenz/tokenz.go.rl -o tokenz/tokenz.go
-	@goimports -w tokenz/tokenz.go
+gen-lexer:
+	@ragel -Z -G2 lexer/lexer.go.rl -o lexer/lexer.go
+	@goimports -w lexer/lexer.go
 
-test: gen-fbs gen-tokenz
+test: gen-fbs gen-lexer
 	@go test -v -cover ./...
 
 bench: test

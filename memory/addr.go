@@ -66,7 +66,7 @@ func (a Addr) Int64() int64 {
 	return int64(binary.BigEndian.Uint64(a.dat))
 }
 
-func (a Addr) setInt64(n int64) {
+func (a Addr) SetInt64(n int64) {
 	binary.BigEndian.PutUint64(a.dat, uint64(n))
 }
 

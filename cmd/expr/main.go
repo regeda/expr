@@ -1,7 +1,10 @@
-package expr_test
+package main
 
 import (
 	"fmt"
+	"io"
+	"log"
+	"os"
 
 	"github.com/regeda/expr/compiler"
 	"github.com/regeda/expr/delegate"
@@ -10,23 +13,28 @@ import (
 	"github.com/regeda/expr/stdlib"
 )
 
-func ExampleExpr() {
-	code := `join(",", ["a", "b"])`
+func main() {
+	bytes, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	tokens, err := lexer.Parse([]byte(code))
+	tokens, err := lexer.Parse(bytes)
 	if err != nil {
 		panic(err)
 	}
 
-	bytecode := compiler.Compile(tokens)
+	bcode := compiler.Compile(tokens)
 
 	ex := exec.New(
 		exec.WithRegistry(delegate.Import(stdlib.Compare, stdlib.Strings)),
 	)
-	addr, err := ex.Exec(bytecode)
+
+	addr, err := ex.Exec(bcode)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	fmt.Println(addr.Type(), addr.Bytes())
+	addr.Print(os.Stdout)
+	fmt.Fprintln(os.Stdout)
 }

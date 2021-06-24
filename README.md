@@ -40,6 +40,15 @@ true, false
 [["hello"], "world!"]
 ```
 
+### Operators
+
+The virtual machine supports basic math operators `+-*/`. A math expression might be surrounded by parentheses.
+Examples:
+```
+1 + -1
+1 * (2 + 3)
+```
+
 ### Delegators
 
 In general, delegators are functions implemented by the hosted application.
@@ -92,69 +101,45 @@ contains([1, 2, 3], 4) // false
 
 ## Architecture
 
-The architecture consists of 4 components:
-1. Tokenizer
-2. Syntax Tree Builder
-3. Compiler
-4. Virtual Machine
+The architecture consists of 3 components:
+1. Lexer
+2. Compiler
+3. Virtual Machine
 
-**The Tokenizer** parses the input text:
+**The lexer** parses the input text:
 ```
 join(",", ["a", "b"])
 ```
-and returns the following tokens:
+and generates a syntax tree:
 ```
-IDENT join
-PUNCT (
 STR ","
-PUNCT ,
-PUNCT [
 STR "a"
-PUNCT ,
 STR "b"
-PUNCT ]
-PUNCT )
+ARR 2
+INVOKE join 2
 ```
+> The lexer is implemented using [Ragel State Machine Compiler](https://www.colm.net/open-source/ragel/).
 
-> The tokenizer is implemented using [Ragel State Machine Compiler](https://www.colm.net/open-source/ragel/).
-
-**The Syntax Tree Builder** generates a syntax tree from tokens:
-```
-EXIT
-|-- CALL(join)
-   |-- STR(",")
-   |-- ARR
-       |-- STR("a")
-       |-- STR("b")
-```
-
-> A schema of the syntax tree is described by [Protocol Buffers 3](https://developers.google.com/protocol-buffers/) to make it easy traversable by any programming language.
-
-**The Compiler** makes a bytecode from the syntax tree to make it executable by **a stack-based virtual machine**:
-```
-PUSH_STR ","
-PUSH_STR "a"
-PUSH_STR "b"
-PUSH_VECTOR 2
-SYS_CALL "join" 2
-RET
-```
-
+**The compiler** makes a bytecode from the syntax tree to make it executable by **a stack-based virtual machine**.
 > The bytecode is described by [Flatbuffers](https://google.github.io/flatbuffers/flatbuffers_guide_use_go.html) to achieve high-throughput with low memory consumption.
 
 ## Usage
 
 Compilation:
 ```go
-import "github.com/regeda/expr/asm"
+import (
+    "github.com/regeda/expr/compiler"
+    "github.com/regeda/expr/lexer"
+)
 
 code := `join(",", ["a", "b"])`
 
-a := asm.New()
-bytecode, err := a.Assemble([]byte(code))
+tokens, err := lexer.Parse([]byte(code))
 if err != nil {
     panic(err)
 }
+
+bytecode := compiler.Compile(tokens)
 
 // save `bytecode` to be executed by the virtual machine
 ```
@@ -189,5 +174,5 @@ equals("foo,bar,baz", join(",", ["foo", "bar", "baz"]))
 ```
 cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
 BenchmarkExec
-BenchmarkExec-8          1508277               798.5 ns/op             0 B/op          0 allocs/op
+BenchmarkExec-8          1635091               746.7 ns/op             0 B/op          0 allocs/op
 ```
