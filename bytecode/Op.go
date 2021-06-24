@@ -10,30 +10,42 @@ const (
 	OpNONE         Op = 0
 	OpOpPushStr    Op = 1
 	OpOpPushInt    Op = 2
-	OpOpPushBool   Op = 3
-	OpOpPushVector Op = 4
-	OpOpSysCall    Op = 5
-	OpOpRet        Op = 6
+	OpOpPushTrue   Op = 3
+	OpOpPushFalse  Op = 4
+	OpOpPushVector Op = 5
+	OpOpInvoke     Op = 6
+	OpOpAdd        Op = 7
+	OpOpSub        Op = 8
+	OpOpMul        Op = 9
+	OpOpDiv        Op = 10
 )
 
 var EnumNamesOp = map[Op]string{
 	OpNONE:         "NONE",
 	OpOpPushStr:    "OpPushStr",
 	OpOpPushInt:    "OpPushInt",
-	OpOpPushBool:   "OpPushBool",
+	OpOpPushTrue:   "OpPushTrue",
+	OpOpPushFalse:  "OpPushFalse",
 	OpOpPushVector: "OpPushVector",
-	OpOpSysCall:    "OpSysCall",
-	OpOpRet:        "OpRet",
+	OpOpInvoke:     "OpInvoke",
+	OpOpAdd:        "OpAdd",
+	OpOpSub:        "OpSub",
+	OpOpMul:        "OpMul",
+	OpOpDiv:        "OpDiv",
 }
 
 var EnumValuesOp = map[string]Op{
 	"NONE":         OpNONE,
 	"OpPushStr":    OpOpPushStr,
 	"OpPushInt":    OpOpPushInt,
-	"OpPushBool":   OpOpPushBool,
+	"OpPushTrue":   OpOpPushTrue,
+	"OpPushFalse":  OpOpPushFalse,
 	"OpPushVector": OpOpPushVector,
-	"OpSysCall":    OpOpSysCall,
-	"OpRet":        OpOpRet,
+	"OpInvoke":     OpOpInvoke,
+	"OpAdd":        OpOpAdd,
+	"OpSub":        OpOpSub,
+	"OpMul":        OpOpMul,
+	"OpDiv":        OpOpDiv,
 }
 
 func (v Op) String() string {

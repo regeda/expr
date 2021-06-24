@@ -3,10 +3,10 @@ package expr_test
 import (
 	"testing"
 
-	"github.com/regeda/expr/ast"
 	"github.com/regeda/expr/compiler"
 	"github.com/regeda/expr/delegate"
 	"github.com/regeda/expr/exec"
+	"github.com/regeda/expr/lexer"
 	"github.com/regeda/expr/memory"
 	"github.com/regeda/expr/stdlib"
 )
@@ -14,7 +14,7 @@ import (
 func BenchmarkExec(b *testing.B) {
 	var comp compiler.Compiler
 
-	vm := exec.New(
+	ex := exec.New(
 		exec.WithRegistry(delegate.Import(stdlib.Compare, stdlib.Strings)),
 		exec.WithStackSize(0xff),
 		exec.WithMemory(
@@ -25,26 +25,21 @@ func BenchmarkExec(b *testing.B) {
 		),
 	)
 
-	bcode := comp.Compile(
-		ast.Exit().Nest(
-			ast.Call("equals").Nest(
-				ast.Str("foo,bar,baz"),
-				ast.Call("join").Nest(
-					ast.Str(","),
-					ast.Arr().Nest(
-						ast.Str("foo"),
-						ast.Str("bar"),
-						ast.Str("baz"),
-					),
-				),
-			),
-		),
-	)
+	bcode := comp.Compile([]lexer.Node{
+		{Typ: lexer.TypStr, DatS: "foo,bar,baz"},
+		{Typ: lexer.TypStr, DatS: ","},
+		{Typ: lexer.TypStr, DatS: "foo"},
+		{Typ: lexer.TypStr, DatS: "bar"},
+		{Typ: lexer.TypStr, DatS: "baz"},
+		{Typ: lexer.TypVector, Cap: 3},
+		{Typ: lexer.TypInvoke, DatS: "join", Cap: 2},
+		{Typ: lexer.TypInvoke, DatS: "equals", Cap: 2},
+	})
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := vm.Exec(bcode)
+		_, err := ex.Exec(bcode)
 		if err != nil {
 			b.FailNow()
 		}

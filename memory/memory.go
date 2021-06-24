@@ -91,7 +91,7 @@ func (b *Memory) AllocBytes(size uint32) Addr {
 
 func (b *Memory) AllocInt64(v int64) Addr {
 	addr := b.alloc(TypeInt64, sizeInt64)
-	addr.setInt64(v)
+	addr.SetInt64(v)
 	return addr
 }
 

@@ -8,29 +8,44 @@ table OpPushInt {
   val:long;
 }
 
-table OpPushBool {
-  val:bool;
+table OpPushTrue {
+}
+
+table OpPushFalse {
 }
 
 table OpPushVector {
   elems:ushort;
 }
 
-table OpSysCall {
+table OpInvoke {
   args:ushort;
   name:string;
 }
 
-table OpRet {
+table OpAdd {
+}
+
+table OpSub {
+}
+
+table OpMul {
+}
+
+table OpDiv {
 }
 
 union Op {
   OpPushStr,
   OpPushInt,
-  OpPushBool,
+  OpPushTrue,
+  OpPushFalse,
   OpPushVector,
-  OpSysCall,
-  OpRet
+  OpInvoke,
+  OpAdd,
+  OpSub,
+  OpMul,
+  OpDiv,
 }
 
 struct Version {
