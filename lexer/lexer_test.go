@@ -419,8 +419,24 @@ func TestLexer_ParseFailed(t *testing.T) {
 			"token parsing error at 0",
 		},
 		{
+			"true()",
+			"token parsing error at 0",
+		},
+		{
+			"false()",
+			"token parsing error at 0",
+		},
+		{
 			"1+++1",
 			"token parsing error at 2",
+		},
+		{
+			"1 + + 1",
+			"token parsing error at 4",
+		},
+		{
+			"1+ - 1",
+			"token parsing error at 3",
 		},
 		{
 			"1)",

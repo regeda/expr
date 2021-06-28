@@ -27,6 +27,13 @@ var typ2str = [...]string{
 	"op_add", "op_sub", "op_mul", "op_div",
 }
 
+var typMathOp = map[byte]Typ{
+	'+': TypOpAdd,
+	'-': TypOpSub,
+	'*': TypOpMul,
+	'/': TypOpDiv,
+}
+
 func (t Typ) String() string {
 	i := int(t)
 	if i < len(typ2str) {
