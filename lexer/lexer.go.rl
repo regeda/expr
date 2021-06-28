@@ -14,106 +14,15 @@ type Lexer struct {
   cs, top         int
   data            []byte
   stack           [1024]int
-  rpn, ops, caps  nvec
+  ast             ast
 }
 
 func (l *Lexer) text() string {
   return string(l.data[l.pb:l.p])
 }
 
-func (l *Lexer) pushInt(n int64) {
-  l.rpn.push(Node{Typ: TypInt, DatN: n})
-}
-
-func (l *Lexer) pushStr(s string) {
-  l.rpn.push(Node{Typ: TypStr, DatS: s})
-}
-
-func (l *Lexer) pushIdent() {
-  l.rpn.push(Node{Typ: typIdent, DatS: strings.ToLower(l.text())})
-}
-
-func (l *Lexer) pushTrue() {
-  l.rpn.push(Node{Typ: TypTrue})
-}
-
-func (l *Lexer) pushFalse() {
-  l.rpn.push(Node{Typ: TypFalse})
-}
-
-func (l *Lexer) pushMathOp() {
-  switch l.text() {
-  case "+":
-    l.rotateTypeOf(TypOpAdd, TypOpSub, TypOpMul, TypOpDiv)
-    l.ops.push(Node{Typ: TypOpAdd})
-  case "-":
-    l.rotateTypeOf(TypOpAdd, TypOpSub, TypOpMul, TypOpDiv)
-    l.ops.push(Node{Typ: TypOpSub})
-  case "*":
-    l.rotateTypeOf(TypOpMul, TypOpDiv)
-    l.ops.push(Node{Typ: TypOpMul})
-  case "/":
-    l.rotateTypeOf(TypOpMul, TypOpDiv)
-    l.ops.push(Node{Typ: TypOpDiv})
-  }
-}
-
-func (l *Lexer) pushInvoke() {
-  n := l.rpn.pop().setTyp(TypInvoke)
-  l.ops.push(n)
-  l.caps.push(n)
-}
-
-func (l *Lexer) pushVector() {
-  n := Node{Typ: TypVector}
-  l.ops.push(n)
-  l.caps.push(n)
-}
-
-func (l *Lexer) openPths() {
-  l.ops.push(Node{Typ: typPths})
-}
-
-func (l *Lexer) closePths() {
-  l.rotateUntil(typPths)
-}
-
-func (l *Lexer) rotateTypeOf(t ...Typ) {
-  for !l.ops.empty() {
-    if !l.ops.top().typeOf(t...) {
-      break
-    }
-    l.rpn.push(l.ops.pop())
-  }
-}
-
-func (l *Lexer) rotateComma() {
-  n := l.caps.pop().incCap()
-  l.rotateUntil(n.Typ)
-  l.ops.push(n)
-  l.caps.push(n)
-}
-
-func (l *Lexer) popCaps() {
-  n := l.caps.pop()
-  l.rotateUntil(n.Typ)
-  l.rpn.push(n)
-}
-
-func (l *Lexer) rotateUntil(t Typ) {
-  for !l.ops.empty() {
-    n := l.ops.pop()
-    if n.Typ == t {
-      break
-    }
-    l.rpn.push(n)
-  }
-}
-
 func (l *Lexer) Parse(input []byte) ([]Node, error) {
-  l.rpn.reset()
-  l.ops.reset()
-  l.caps.reset()
+  l.ast.reset()
 
   l.data = input
   l.p = 0
@@ -134,32 +43,32 @@ func (l *Lexer) Parse(input []byte) ([]Node, error) {
 
   action return { fret; }
   action mark { l.pb = l.p }
-  action opts_first_param { l.caps.push(l.caps.pop().incCap()) }
-  action rotate_comma { l.rotateComma() }
-  action pop_caps { l.popCaps() }
-  action push_invoke { l.pushInvoke() }
-  action push_vector { l.pushVector() }
-  action open_pths { l.openPths() }
-  action close_pths { l.closePths() }
-  action push_ident { l.pushIdent() }
+  action opts_first_param { l.ast.incCaps() }
+  action rotate_comma { l.ast.rotateComma() }
+  action pop_caps { l.ast.popCaps() }
+  action push_invoke { l.ast.pushInvoke() }
+  action push_vector { l.ast.pushVector() }
+  action open_pths { l.ast.openPths() }
+  action close_pths { l.ast.closePths() }
+  action push_ident { l.ast.pushIdent(l.text()) }
   action push_str {
     str, perr = strconv.Unquote(l.text())
     if perr != nil {
       perr = errors.Wrapf(perr, "strconv.Unquote %s", l.text())
       fbreak;
     }
-    l.pushStr(str)
+    l.ast.pushStr(str)
   }
   action push_int {
     n64, perr = strconv.ParseInt(l.text(), 10, 64)
     if perr != nil {
       fbreak;
     }
-    l.pushInt(n64)
+    l.ast.pushInt(n64)
   }
-  action push_true { l.pushTrue() }
-  action push_false { l.pushFalse() }
-  action push_math_op { l.pushMathOp() }
+  action push_true { l.ast.pushTrue() }
+  action push_false { l.ast.pushFalse() }
+  action push_math_op { l.ast.pushMathOp(l.data[l.pb]) }
 
   not_dquote = [^"\\];
   esc_smth = /\\./;
@@ -221,9 +130,7 @@ func (l *Lexer) Parse(input []byte) ([]Node, error) {
     return nil, fmt.Errorf("token parsing error at %d", l.pb)
   }
 
-  for !l.ops.empty() {
-    l.rpn.push(l.ops.pop())
-  }
+  l.ast.rotateBreakOn()
 
-  return l.rpn, nil
+  return l.ast.rpn, nil
 }
