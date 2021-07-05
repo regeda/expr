@@ -52,6 +52,77 @@ func TestAddr_EqualBytes(t *testing.T) {
 	assert.False(t, memory.True.EqualBytes(memory.False))
 }
 
+func TestAddr_Equal(t *testing.T) {
+	mem := memory.New()
+
+	cases := []struct {
+		name string
+		a, b memory.Addr
+		res  bool
+	}{
+		{
+			"false: array of array",
+			mem.CopyVector(
+				mem.CopyVector(
+					mem.AllocInt64(1),
+				),
+			),
+			mem.CopyVector(
+				mem.CopyVector(
+					mem.AllocInt64(2),
+				),
+			),
+			false,
+		},
+		{
+			"false: array diff len",
+			mem.CopyVector(
+				mem.CopyVector(),
+			),
+			mem.CopyVector(
+				mem.CopyVector(
+					mem.AllocInt64(1),
+				),
+			),
+			false,
+		},
+		{
+			"false: array of diff types",
+			mem.CopyVector(
+				mem.CopyVector(
+					mem.AllocBytesAddr([]byte("foo")),
+				),
+			),
+			mem.CopyVector(
+				mem.CopyVector(
+					mem.AllocInt64(1),
+				),
+			),
+			false,
+		},
+		{
+			"true: array of array",
+			mem.CopyVector(
+				mem.CopyVector(
+					mem.AllocInt64(1),
+				),
+			),
+			mem.CopyVector(
+				mem.CopyVector(
+					mem.AllocInt64(1),
+				),
+			),
+			true,
+		},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			require.Equal(t, c.res, c.a.Equal(c.b))
+		})
+	}
+
+}
+
 func TestAddr_Print(t *testing.T) {
 	mem := memory.New()
 
