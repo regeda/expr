@@ -90,6 +90,24 @@ func (a Addr) EqualBytes(b Addr) bool {
 	return bytes.Equal(a.dat, b.dat)
 }
 
+func (a Addr) Equal(b Addr) bool {
+	if !a.EqualType(b) {
+		return false
+	}
+	if a.TypeOf(TypeVector) {
+		if a.VectorLen() != b.VectorLen() {
+			return false
+		}
+		for i, ax := range a.Vector() {
+			if !ax.Equal(b.VectorAt(i)) {
+				return false
+			}
+		}
+		return true
+	}
+	return a.EqualBytes(b)
+}
+
 func (a Addr) Print(w io.Writer) {
 	fmt.Fprint(w, a.typ)
 	switch a.typ {

@@ -21,21 +21,7 @@ func equals(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	if len(argv) != 2 {
 		return memory.Nil, errEqualsExpectedTwoArgs
 	}
-	if !argv[0].EqualType(argv[1]) {
-		return memory.False, nil
-	}
-	if argv[0].TypeOf(memory.TypeVector) {
-		if argv[0].VectorLen() != argv[1].VectorLen() {
-			return memory.False, nil
-		}
-		for i, a := range argv[0].Vector() {
-			if !a.EqualBytes(argv[1].VectorAt(i)) {
-				return memory.False, nil
-			}
-		}
-		return memory.True, nil
-	}
-	if argv[0].EqualBytes(argv[1]) {
+	if argv[0].Equal(argv[1]) {
 		return memory.True, nil
 	}
 	return memory.False, nil
@@ -58,7 +44,7 @@ func contains(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 		return memory.Nil, errContainsExpectedScalarAt1
 	}
 	for _, p := range argv[0].Vector() {
-		if p.EqualBytes(argv[1]) {
+		if p.Equal(argv[1]) {
 			return memory.True, nil
 		}
 	}
@@ -79,7 +65,7 @@ func intersects(mem *memory.Memory, argv []memory.Addr) (memory.Addr, error) {
 	}
 	for _, a := range argv[0].Vector() {
 		for _, b := range argv[1].Vector() {
-			if a.EqualBytes(b) {
+			if a.Equal(b) {
 				return memory.True, nil
 			}
 		}
